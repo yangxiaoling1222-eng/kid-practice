@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>宝贝每日练习</title>
+<style>
+:root{
+  --bg:#FFF7EF; --card:#fff; --ink:#3A3129; --ink2:#8A7C6B; --line:#F0E4D6;
+  --math:#4C86E8; --math-l:#EAF2FE;
+  --py:#2FA98C; --py-l:#E6F7F2;
+  --warn:#F5A63C; --warn-l:#FFF2DF;
+  --bad:#E8574A; --bad-l:#FDECEA;
+  --good:#2FA98C;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  font-size:16px; line-height:1.5;
+  padding-bottom:calc(72px + env(safe-area-inset-bottom));
+  overscroll-behavior-y:contain;
+}
+.wrap{max-width:520px;margin:0 auto;padding:0 14px}
+button{font-family:inherit;font-size:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.hide{display:none!important}
+
+/* header */
+.hd{padding:16px 0 8px;display:flex;align-items:center;gap:10px}
+.hd .tt{font-size:20px;font-weight:800;letter-spacing:.5px}
+.hd .dt{font-size:12px;color:var(--ink2);margin-top:2px}
+.avatar{width:40px;height:40px;border-radius:14px;background:linear-gradient(135deg,#FFD08A,#FF9A76);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex:none}
+
+/* card */
+.card{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(180,150,110,.10)}
+.card h3{margin:0 0 10px;font-size:15px;font-weight:800;display:flex;align-items:center;gap:6px}
+.muted{color:var(--ink2);font-size:13px}
+.row{display:flex;align-items:center;gap:10px}
+.between{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.grow{flex:1;min-width:0}
+
+/* 今日入口 */
+.entry{display:block;width:100%;text-align:left;border-radius:var(--r);padding:16px;margin-bottom:12px;color:#fff;position:relative;overflow:hidden;cursor:pointer}
+.entry.m{background:linear-gradient(135deg,#5C93F0,#3D74D6)}
+.entry.p{background:linear-gradient(135deg,#43BC9C,#1F9680)}
+.entry .nm{font-size:18px;font-weight:800}
+.entry .ds{font-size:12px;opacity:.9;margin-top:3px}
+.entry .pg{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:700;opacity:.95}
+.entry .bar{height:5px;background:rgba(255,255,255,.35);border-radius:3px;margin-top:10px;overflow:hidden}
+.entry .bar i{display:block;height:100%;background:#fff;border-radius:3px;transition:width .4s}
+
+/* 统计小格 */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:var(--card);border-radius:14px;padding:12px 10px;text-align:center;box-shadow:0 2px 10px rgba(180,150,110,.08)}
+.stat b{display:block;font-size:22px;font-weight:800;line-height:1.2}
+.stat span{font-size:11px;color:var(--ink2)}
+
+/* tabbar */
+.tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:50;max-width:520px;margin:0 auto;box-shadow:0 -2px 14px rgba(180,150,110,.10)}
+.tabs button{flex:1;padding:9px 0 7px;font-size:11px;color:var(--ink2);display:flex;flex-direction:column;align-items:center;gap:3px}
+.tabs button i{font-size:20px;font-style:normal;line-height:1}
+.tabs button.on{color:var(--math);font-weight:700}
+
+/* 题目区 */
+.qbox{text-align:center;padding:26px 10px 10px}
+.qtext{font-size:44px;font-weight:800;letter-spacing:2px;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;min-height:60px}
+.qtext .n{color:var(--ink)}
+.qtext .op{color:var(--math);margin:0 2px}
+.qtext .bx{display:inline-flex;align-items:center;justify-content:center;min-width:64px;height:64px;border:3px dashed var(--math);border-radius:14px;color:var(--math);background:var(--math-l)}
+.qtext .bx.f{border-style:solid;border-color:var(--ink2);color:var(--ink);background:#fff}
+.qtext .bx.ok{border-color:var(--good);color:var(--good);background:var(--py-l)}
+.qtext .bx.no{border-color:var(--bad);color:var(--bad);background:var(--bad-l)}
+.qtip{font-size:13px;color:var(--ink2);margin-top:8px;min-height:20px}
+.qtip.ok{color:var(--good);font-weight:700}
+.qtip.no{color:var(--bad);font-weight:700}
+
+/* 键盘 */
+.kb{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:6px 0 4px}
+.kb button{background:#fff;border-radius:14px;padding:14px 0;font-size:22px;font-weight:800;box-shadow:0 2px 6px rgba(180,150,110,.14);transition:transform .08s}
+.kb button:active{transform:scale(.94)}
+.kb button.fn{font-size:15px;color:var(--ink2);background:#F6EFE6;box-shadow:none}
+.kb button.go{background:var(--math);color:#fff;font-size:17px}
+
+/* 拼音卡 */
+.pcard{background:var(--card);border-radius:22px;padding:22px 16px;text-align:center;box-shadow:0 4px 18px rgba(180,150,110,.14);min-height:250px;display:flex;flex-direction:column;justify-content:center}
+.py{font-size:40px;font-weight:800;letter-spacing:3px;line-height:1.35}
+.py .a{color:var(--py)}
+.py .b{color:#7C6EF0}
+.py .sep{color:#DDD;font-weight:400;margin:0 8px;font-size:26px}
+.hz{font-size:30px;font-weight:700;color:var(--ink);margin-top:6px;letter-spacing:8px}
+.wd{font-size:14px;color:var(--ink2);margin-top:8px;letter-spacing:1px}
+.tag{display:inline-block;font-size:11px;padding:3px 9px;border-radius:20px;background:var(--py-l);color:var(--py);font-weight:700;margin-bottom:12px}
+.tone-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.tone-row div{font-size:34px;font-weight:800;color:var(--py)}
+.tone-row div small{display:block;font-size:14px;color:var(--ink2);font-weight:600;letter-spacing:0}
+
+/* 按钮 */
+.btn{display:block;width:100%;padding:15px;border-radius:16px;font-size:17px;font-weight:800;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.06)}
+.btn.p{background:var(--math);color:#fff}
+.btn.g{background:#fff;color:var(--ink);border:2px solid var(--line)}
+.btn.ok{background:var(--good);color:#fff}
+.btn.no{background:#fff;color:var(--bad);border:2px solid #F3C9C4}
+.btn:active{transform:scale(.98)}
+.btnrow{display:flex;gap:10px}
+.btnrow .btn{flex:1}
+
+/* progress */
+.ptop{display:flex;align-items:center;gap:10px;padding:6px 0 12px}
+.ptop .bar{flex:1;height:8px;background:#F0E4D6;border-radius:4px;overflow:hidden}
+.ptop .bar i{display:block;height:100%;background:var(--math);border-radius:4px;transition:width .3s}
+.ptop .bar.p i{background:var(--py)}
+.ptop .cnt{font-size:13px;font-weight:700;color:var(--ink2)}
+
+/* 设置 */
+.set{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}
+.set:last-child{border-bottom:0}
+.set .lb{font-size:15px;font-weight:600}
+.set .sb{font-size:12px;color:var(--ink2);margin-top:2px}
+.stepper{display:flex;align-items:center;gap:12px;flex:none}
+.stepper button{width:34px;height:34px;border-radius:11px;background:#F6EFE6;font-size:19px;font-weight:800;color:var(--ink2);line-height:1}
+.stepper span{min-width:34px;text-align:center;font-weight:800;font-size:18px}
+.chip{font-size:13px;padding:7px 12px;border-radius:20px;background:#F6EFE6;color:var(--ink2);font-weight:600;cursor:pointer;display:inline-block}
+.chip.on{background:var(--math-l);color:var(--math);box-shadow:inset 0 0 0 1.5px var(--math)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+
+/* 历史/日历 */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal div{aspect-ratio:1;border-radius:9px;background:#F6EFE6;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--ink2);position:relative}
+.cal div.l0{background:#F6EFE6}
+.cal div.l1{background:#D8F0E8;color:#1F7A63;font-weight:700}
+.cal div.l2{background:#8FDCC4;color:#0F5D49;font-weight:800}
+.cal div.l3{background:#2FA98C;color:#fff;font-weight:800}
+.cal div.td{box-shadow:0 0 0 2px var(--math)}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;font-size:11px;color:var(--ink2);text-align:center;margin-bottom:6px}
+
+.list{display:flex;flex-direction:column;gap:8px}
+.li{background:#fff;border-radius:14px;padding:12px;box-shadow:0 2px 8px rgba(180,150,110,.08);cursor:pointer}
+.li .d{font-size:13px;font-weight:800}
+.li .v{font-size:12px;color:var(--ink2);margin-top:4px;display:flex;gap:10px;flex-wrap:wrap}
+.barmini{height:6px;border-radius:3px;background:#F0E4D6;overflow:hidden;margin-top:8px}
+.barmini i{display:block;height:100%;border-radius:3px}
+.wrongitem{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.wrongitem:last-child{border-bottom:0}
+.badge{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--bad-l);color:var(--bad);font-weight:700}
+
+/* 完成页 */
+.done{text-align:center;padding:20px 0}
+.done .em{font-size:56px;line-height:1}
+.done h2{margin:8px 0 4px;font-size:22px}
+.stars{font-size:26px;letter-spacing:4px;margin:6px 0 12px}
+
+.sheet{position:fixed;inset:0;background:rgba(40,30,20,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+.sheet .box{background:#fff;width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom));max-height:86vh;overflow:auto}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:rgba(50,40,30,.92);color:#fff;padding:10px 18px;border-radius:22px;font-size:14px;z-index:200;opacity:0;transition:opacity .25s;pointer-events:none;max-width:80%;text-align:center}
+.toast.on{opacity:1}
+@keyframes pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+.pop{animation:pop .32s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<div class="tabs" id="tabs">
+  <button data-t="home" class="on"><i>🏠</i>今日</button>
+  <button data-t="stat"><i>📊</i>统计</button>
+  <button data-t="set"><i>⚙️</i>设置</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ 拼音题库 ============ */
+/* 对比对： "拼音|汉字|词语:拼音|汉字|词语" */
+var CONTRAST = {
+  /* 平舌 z c s  ↔  翘舌 zh ch sh */
+  zs: [
+    "zhī|知|知道:zī|姿|姿势","zhǐ|纸|白纸:zǐ|紫|紫色","zhú|竹|竹子:zú|足|足球",
+    "zhǔ|煮|煮饭:zǔ|组|组长","zhāi|摘|摘花:zāi|栽|栽树","zhǎo|找|找人:zǎo|早|早上",
+    "zhàn|站|站好:zàn|赞|点赞","zhāng|张|张开:zāng|脏|脏了","zhēn|真|真的:zěn|怎|怎么",
+    "zhōng|中|中间:zōng|棕|棕色","zhuō|桌|桌子:zuó|昨|昨天",
+    "chí|迟|迟到:cí|词|词语","chì|翅|翅膀:cì|次|一次","chāi|拆|拆开:cāi|猜|猜谜",
+    "chǎo|吵|吵架:cǎo|草|小草","cháng|长|长短:cáng|藏|捉迷藏","chéng|成|成功:céng|层|一层",
+    "chū|出|出去:cū|粗|粗心","chù|处|到处:cù|醋|吃醋","chuī|吹|吹气:cuī|催|催一催",
+    "chōng|冲|冲水:cōng|聪|聪明","chóng|虫|虫子:cóng|从|从前","chūn|春|春天:cūn|村|村子",
+    "chún|唇|嘴唇:cún|存|存放",
+    "shī|师|老师:sī|思|思考","shì|是|是的:sì|四|四个","shài|晒|晒太阳:sài|赛|比赛",
+    "shǎo|少|多少:sǎo|扫|扫地","shān|山|大山:sān|三|三个","shǎn|闪|闪光:sǎn|伞|雨伞",
+    "shàn|扇|扇子:sàn|散|散步","shāng|伤|受伤:sāng|桑|桑树","shēn|身|身体:sēn|森|森林",
+    "shù|树|大树:sù|速|快速","shuō|说|说话:suō|缩|缩小","shuí|谁|是谁:suí|随|随便",
+    "shuì|睡|睡觉:suì|岁|几岁","shuān|拴|拴住:suān|酸|酸甜"
+  ],
+  /* 前鼻音 an en in  ↔  后鼻音 ang eng ing */
+  bb: [
+    "bān|班|班级:bāng|帮|帮忙","pán|盘|盘子:páng|旁|旁边","fān|翻|翻身:fāng|方|方向",
+    "dān|单|单数:dāng|当|当然","tán|弹|弹琴:táng|糖|吃糖","lán|蓝|蓝色:láng|狼|大灰狼",
+    "gān|干|干净:gāng|刚|刚才","cán|蚕|蚕宝宝:cáng|藏|捉迷藏","sān|三|三个:sāng|桑|桑树",
+    "zhǎn|展|展开:zhǎng|长|长大","chǎn|铲|铲子:chǎng|厂|工厂","shān|山|大山:shāng|伤|受伤",
+    "yǎn|眼|眼睛:yǎng|养|养鱼","wān|弯|弯腰:wāng|汪|汪汪","qián|前|前面:qiáng|墙|墙壁",
+    "xiān|先|先后:xiāng|香|香甜","jiān|间|中间:jiāng|江|江水","lián|连|连线:liáng|凉|凉快",
+    "chuán|船|小船:chuáng|床|小床","shuān|拴|拴住:shuāng|双|一双",
+    "fēn|分|分开:fēng|风|大风","mén|门|开门:mèng|梦|做梦","gēn|跟|跟着:gèng|更|更好",
+    "pén|盆|花盆:péng|朋|朋友","zhēn|真|真的:zhēng|蒸|蒸饭","chén|晨|早晨:chéng|成|成功",
+    "shēn|身|身体:shēng|声|声音","shén|什|什么:shéng|绳|绳子",
+    "pīn|拼|拼图:pīng|乒|乒乓","mín|民|人民:míng|明|明天","lín|林|树林:líng|铃|铃铛",
+    "jīn|金|金子:jīng|睛|眼睛","qīn|亲|亲人:qīng|青|青草","xīn|心|开心:xīng|星|星星",
+    "yīn|音|声音:yīng|鹰|老鹰","jìn|进|进来:jìng|镜|镜子","xìn|信|写信:xìng|兴|高兴"
+  ],
+  /* n / l 不分 */
+  nl: [
+    "nà|那|那里:là|蜡|蜡笔","nán|男|男孩:lán|蓝|蓝色","nǎo|脑|大脑:lǎo|老|老师",
+    "nǐ|你|你好:lǐ|里|里面","nèi|内|内外:lèi|累|累了","niú|牛|小牛:liú|流|流水",
+    "nián|年|新年:lián|连|连线","nín|您|您好:lín|林|树林","ní|泥|泥巴:lí|梨|鸭梨",
+    "nóng|农|农民:lóng|龙|长龙","nù|怒|生气:lù|路|马路","nǚ|女|女孩:lǚ|旅|旅游",
+    "niàn|念|想念:liàn|练|练习","nuó|挪|挪开:luó|萝|萝卜"
+  ],
+  /* b/d p/q 形近声母 */
+  bd: [
+    "bà|爸|爸爸:dà|大|大人","bān|班|班级:dān|单|单数","bào|抱|抱抱:dào|到|到了",
+    "bù|布|花布:dù|肚|肚子","bǐ|笔|铅笔:dǐ|底|底下","bàn|半|一半:dàn|蛋|鸡蛋",
+    "bìng|病|生病:dìng|定|一定","pí|皮|皮球:qí|骑|骑车","píng|瓶|瓶子:qíng|晴|晴天",
+    "pǔ|普|普通:qǔ|曲|歌曲","pén|盆|花盆:qín|琴|钢琴","pàng|胖|胖胖:qiáng|墙|墙壁"
+  ]
+};
+/* 四声一组 */
+var TONES = [
+  "bā|八|八个,bá|拔|拔草,bǎ|把|一把,bà|爸|爸爸",
+  "wū|屋|屋子,wú|无|无声,wǔ|五|五个,wù|雾|大雾",
+  "shū|书|看书,shú|熟|熟了,shǔ|鼠|老鼠,shù|树|大树",
+  "shī|师|老师,shí|十|十个,shǐ|使|使用,shì|是|是的",
+  "chī|吃|吃饭,chí|迟|迟到,chǐ|尺|尺子,chì|翅|翅膀",
+  "xī|西|西边,xí|习|学习,xǐ|洗|洗手,xì|戏|游戏",
+  "tū|突|突然,tú|图|图画,tǔ|土|泥土,tù|兔|兔子",
+  "hū|呼|呼吸,hú|湖|湖水,hǔ|虎|老虎,hù|护|保护",
+  "yī|衣|衣服,yí|姨|阿姨,yǐ|椅|椅子,yì|易|容易",
+  "mō|摸|摸一摸,mó|磨|磨刀,mǒ|抹|抹掉,mò|墨|墨水"
+];
+/* 整体认读音节 16 个 */
+var WHOLE = [
+  "zhī|知|知道","chī|吃|吃饭","shí|十|十个","rì|日|日出","zì|字|写字","cí|词|词语",
+  "sì|四|四个","yī|衣|衣服","wǔ|五|五个","yú|鱼|小鱼","yè|叶|树叶","yuè|月|月亮",
+  "yuán|圆|圆形","yīn|音|声音","yún|云|白云","yīng|鹰|老鹰"
+];
+/* 综合朗读词卡 */
+var WORDS = [
+  "mā|妈|妈妈","bà|爸|爸爸","mǎ|马|小马","tù|兔|兔子","gǒu|狗|小狗","māo|猫|小猫",
+  "niú|牛|小牛","yú|鱼|小鱼","niǎo|鸟|小鸟","jī|鸡|小鸡","huā|花|花朵","cǎo|草|小草",
+  "shù|树|大树","yè|叶|树叶","guǒ|果|水果","guā|瓜|西瓜","zhú|竹|竹子","sōng|松|松树",
+  "jiā|家|回家","qiáo|桥|小桥","xióng|熊|熊猫","xiàng|象|大象","láng|狼|大灰狼",
+  "hú|湖|湖水","hǎi|海|大海","xīng|星|星星","yuè|月|月亮","yún|云|白云","fēng|风|大风",
+  "yǔ|雨|下雨","xuě|雪|下雪","léi|雷|打雷","diàn|电|电话","huǒ|火|火车","shuǐ|水|喝水",
+  "shān|山|大山","tián|田|田地","hé|河|小河","yǎn|眼|眼睛","ěr|耳|耳朵","zuǐ|嘴|嘴巴",
+  "shǒu|手|小手","jiǎo|脚|小脚","tóu|头|点头","xīn|心|开心","pí|皮|皮球","chē|车|汽车",
+  "chuán|船|小船","fēi|飞|飞机","bǐ|笔|铅笔","shū|书|看书","zhǐ|纸|白纸","zhuō|桌|桌子",
+  "yǐ|椅|椅子","mén|门|大门","chuāng|窗|窗户","chuáng|床|小床","dēng|灯|电灯",
+  "zhōng|钟|闹钟","fàn|饭|吃饭","cài|菜|青菜","tāng|汤|喝汤","nǎi|奶|牛奶","dàn|蛋|鸡蛋",
+  "miàn|面|面条","bāo|包|书包","táng|糖|吃糖","péng|朋|朋友","lǎo|老|老师","yī|医|医生",
+  "xià|下|下课","shàng|上|上学","zuǒ|左|左边","yòu|右|右边","qián|前|前面","hòu|后|后面",
+  "lǐ|里|里面","wài|外|外面","hóng|红|红色","huáng|黄|黄色","lán|蓝|蓝色","lǜ|绿|绿色",
+  "bái|白|白色","hēi|黑|黑色","zǐ|紫|紫色","fěn|粉|粉色","yī|一|一个","èr|二|二个",
+  "sān|三|三个","sì|四|四个","wǔ|五|五个","liù|六|六个","qī|七|七个","bā|八|八个",
+  "jiǔ|九|九个","shí|十|十个","dà|大|大大","xiǎo|小|小小","duō|多|很多","shǎo|少|多少",
+  "cháng|长|长长","duǎn|短|短短","gāo|高|高高","ǎi|矮|矮矮","pǎo|跑|跑步","tiào|跳|跳高",
+  "zǒu|走|走路","zuò|坐|坐下","kàn|看|看书","tīng|听|听话","shuō|说|说话","xiào|笑|微笑",
+  "kū|哭|哭声","chàng|唱|唱歌","shuā|刷|刷牙","xǐ|洗|洗手","chuān|穿|穿衣","tuō|脱|脱掉",
+  "qǐ|起|起床","shuì|睡|睡觉","zǎo|早|早上","wǎn|晚|晚上","chūn|春|春天","xià|夏|夏天",
+  "qiū|秋|秋天","dōng|冬|冬天","yé|爷|爷爷","nǎi|奶|奶奶","gē|哥|哥哥","jiě|姐|姐姐",
+  "dì|弟|弟弟","mèi|妹|妹妹","xǐ|喜|喜欢","huān|欢|欢乐","jī|积|积木","mù|木|木头",
+  "qiú|球|皮球","wán|玩|玩耍","huà|画|画画","gē|歌|唱歌","xué|学|学习","xiào|校|学校",
+  "yǔ|语|语文","shù|数|数学","tiān|天|天空","dì|地|大地","huí|回|回来","kāi|开|开门",
+  "guān|关|关门","lái|来|来了","qù|去|出去","zhuō|捉|捉虫","pāi|拍|拍手","bào|抱|抱抱",
+  "xǐng|醒|醒来","jìng|静|安静","kuài|快|快乐","màn|慢|慢慢","yuǎn|远|远方","jìn|近|近处"
+];
+
+/* ============ 数学题型 ============ */
+var MATH_TYPES = [
+  {k:'add',  n:'加法',     d:'3 + 4 = ?'},
+  {k:'sub',  n:'减法',     d:'7 - 2 = ?'},
+  {k:'fill', n:'填空格',   d:'3 + □ = 7'},
+  {k:'cmp',  n:'比大小',   d:'3 + 4 ○ 5'},
+  {k:'chain',n:'连加连减', d:'2 + 3 + 4 = ?'},
+  {k:'mix',  n:'加减混合', d:'5 + 3 - 2 = ?'},
+  {k:'split',n:'数的分解', d:'7 = □ + □'}
+];
+
+/* ============ 拼音类型 ============ */
+var PY_TYPES = [
+  {k:'zs',   n:'平舌·翘舌', d:'z/zh  c/ch  s/sh', df:3},
+  {k:'bb',   n:'前鼻·后鼻', d:'an/ang en/eng in/ing', df:3},
+  {k:'nl',   n:'n 和 l',    d:'男/蓝  牛/流', df:1},
+  {k:'bd',   n:'b·d 和 p·q',d:'爸/大  爬/骑', df:0},
+  {k:'tone', n:'四声调',    d:'bā bá bǎ bà', df:1},
+  {k:'whole',n:'整体认读',  d:'zhi chi shi ri…', df:1},
+  {k:'word', n:'词语朗读',  d:'看拼音读词语', df:1}
+];
+
+/* ================= 基础工具 ================= */
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function p2(n){return n<10?'0'+n:''+n}
+function dk(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
+function todayKey(){return dk(new Date())}
+function cnDate(s){var a=s.split('-');return (+a[1])+'月'+(+a[2])+'日'}
+function hash(str){var h=2166136261;for(var i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function rng(seed){var a=seed>>>0;return function(){a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296}}
+function ri(r,n){return Math.floor(r()*n)}
+function pick(r,arr){return arr[ri(r,arr.length)]}
+function shuffle(a,r){for(var i=a.length-1;i>0;i--){var j=ri(r,i+1);var t=a[i];a[i]=a[j];a[j]=t}return a}
+function pct(c,t){return t?Math.round(c/t*100):0}
+var TOAST_T=null;
+function toast(m){var e=$('#toast');e.textContent=m;e.classList.add('on');clearTimeout(TOAST_T);TOAST_T=setTimeout(function(){e.classList.remove('on')},1800)}
+
+/* ================= 存储 ================= */
+var KEY='kidp_v1';
+var DEF={child:'宝贝',
+  math:{count:10,level:'std',types:['add','sub','fill']},
+  py:{counts:{zs:3,bb:3,nl:1,bd:0,tone:1,whole:1,word:1},showHz:true,speak:true},
+  records:{},weak:{},off:{}};
+function load(){
+  try{var s=localStorage.getItem(KEY);var o=s?JSON.parse(s):{}}catch(e){o={}}
+  var d=JSON.parse(JSON.stringify(DEF));
+  if(o.child)d.child=o.child;
+  if(o.math){d.math.count=o.math.count||10;d.math.level=o.math.level||'std';if(o.math.types&&o.math.types.length)d.math.types=o.math.types.slice()}
+  if(o.py){for(var k in d.py.counts){if(o.py.counts&&typeof o.py.counts[k]==='number')d.py.counts[k]=o.py.counts[k]}
+    if(typeof o.py.showHz==='boolean')d.py.showHz=o.py.showHz;
+    if(typeof o.py.speak==='boolean')d.py.speak=o.py.speak;}
+  d.records=o.records||{};d.weak=o.weak||{};d.off=o.off||{};
+  return d;
+}
+var S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('保存失败：存储空间不足')}}
+function rec(d){if(!S.records[d])S.records[d]={math:{t:0,c:0,ms:0,ty:{},w:[]},py:{t:0,c:0,ty:{},w:[]}};return S.records[d]}
+function todayRec(){return rec(todayKey())}
+
+/* ================= 数学出题 ================= */
+function maxOf(){return S.math.level==='easy'?5:(S.math.level==='hard'?10:10)}
+function genMath(seed){
+  var r=rng(seed),mx=maxOf(),types=S.math.types.slice(),list=[];
+  var easy=S.math.level==='easy';
+  for(var i=0;i<S.math.count;i++){
+    var t=types[ri(r,types.length)];
+    if(easy&&(t==='chain'||t==='mix'||t==='split'))t=(i%2?'sub':'add');
+    list.push(makeQ(t,mx,r,easy));
+  }
+  return list;
+}
+function mkDisp(arr){return arr.map(function(x){return typeof x==='object'?x:{v:x}})}
+function makeQ(t,mx,r,easy){
+  if(t==='add'){
+    var a=ri(r,mx+1),b=ri(r,mx-a+1);
+    return {t:t,d:mkDisp([a,'+',b,'=',{v:'?',b:1}]),ans:a+b,k:'num'};
+  }
+  if(t==='sub'){
+    var a=1+ri(r,mx),b=ri(r,a+1);
+    return {t:t,d:mkDisp([a,'-',b,'=',{v:'?',b:1}]),ans:a-b,k:'num'};
+  }
+  if(t==='fill'){
+    var v=ri(r,4);
+    if(v===0){var c=1+ri(r,mx),a=ri(r,c+1);return {t:t,d:mkDisp([a,'+',{v:'□',b:1},'=',c]),ans:c-a,k:'num'}}
+    if(v===1){var c=1+ri(r,mx),b=ri(r,c+1);return {t:t,d:mkDisp([{v:'□',b:1},'+',b,'=',c]),ans:c-b,k:'num'}}
+    if(v===2){var a=1+ri(r,mx),c=ri(r,a+1);return {t:t,d:mkDisp([a,'-',{v:'□',b:1},'=',c]),ans:a-c,k:'num'}}
+    var b=ri(r,mx),c=ri(r,mx-b+1);return {t:t,d:mkDisp([{v:'□',b:1},'-',b,'=',c]),ans:c+b,k:'num'}
+  }
+  if(t==='cmp'){
+    var a=ri(r,mx+1),b=ri(r,mx-a+1),s=a+b;
+    var c=(ri(r,3)===0)?s:(s+1+ri(r,2)<=mx*2?s+1+ri(r,2):Math.max(0,s-1-ri(r,2)));
+    return {t:t,d:mkDisp([a,'+',b,{v:'○',b:1},c]),ans:(s>c?'>':(s<c?'<':'=')),k:'cmp'};
+  }
+  if(t==='chain'){
+    if(ri(r,2)===0){
+      var a=ri(r,mx),b=ri(r,mx-a),c=ri(r,mx-a-b+1);
+      return {t:t,d:mkDisp([a,'+',b,'+',c,'=',{v:'?',b:1}]),ans:a+b+c,k:'num'};
+    }
+    var a=3+ri(r,mx-2),b=ri(r,a),c=ri(r,a-b+1);
+    return {t:t,d:mkDisp([a,'-',b,'-',c,'=',{v:'?',b:1}]),ans:a-b-c,k:'num'};
+  }
+  if(t==='mix'){
+    var a=ri(r,mx+1),b=ri(r,mx-a+1),c=ri(r,a+b+1);
+    return {t:t,d:mkDisp([a,'+',b,'-',c,'=',{v:'?',b:1}]),ans:a+b-c,k:'num'};
+  }
+  /* split */
+  var c=2+ri(r,mx-1);
+  return {t:t,d:mkDisp([c,'=',{v:'□',b:1},'+',{v:'□',b:1}]),ans:c,k:'split'};
+}
+function placeholder(v){return v==='?'?'?':(v==='○'?'?':'　')}
+function qText(q,fill,state){
+  var bi=0,h='';
+  q.d.forEach(function(x){
+    var v=x.v;
+    if(x.b){
+      var val='',filled=false;
+      if(q.k==='split'){
+        filled=(fill[bi]!==undefined&&fill[bi]!==null);
+        val=filled?fill[bi]:placeholder(v);
+      }else{
+        filled=(fill[0]!==undefined&&fill[0]!==null);
+        val=filled?fill[0]:placeholder(v);
+      }
+      var cls='bx'+(state?(state==='ok'?' ok':(state==='no'?' no':'')):'')+(filled?' f':'');
+      h+='<span class="'+cls+'">'+esc(val)+'</span>';
+      bi++;
+    }else{
+      h+='<span class="'+(['+','-','='].indexOf(v)>=0?'op':'n')+'">'+esc(v)+'</span>';
+    }
+  });
+  return h;
+}
+
+/* ================= 拼音出题 ================= */
+function parseItem(s){var a=s.split('|');return {py:a[0],hz:a[1]||'',w:a[2]||''}}
+function pyPool(k){
+  if(k==='tone')return TONES.map(function(s){return {kind:'tone',tag:'tone',items:s.split(',').map(parseItem),key:s}});
+  if(k==='whole')return WHOLE.map(function(s){var o=parseItem(s);return {kind:'word',tag:'whole',a:o,key:s}});
+  if(k==='word')return WORDS.map(function(s){var o=parseItem(s);return {kind:'word',tag:'word',a:o,key:s}});
+  var src=(CONTRAST[k]||[]).filter(function(s){return s.indexOf('|?')<0});
+  return src.map(function(s){var p=s.split(':');return {kind:'pair',tag:k,a:parseItem(p[0]),b:parseItem(p[1]),key:s}});
+}
+function itemKeys(it){return it.kind==='tone'?it.items.map(function(x){return x.py}):(it.kind==='pair'?[it.a.py,it.b.py]:[it.a.py])}
+function weakScore(it){var ks=itemKeys(it),s=0;ks.forEach(function(k){if(S.weak[k])s+=S.weak[k]});return s}
+function genPy(seed){
+  var r=rng(seed),list=[],used={};
+  PY_TYPES.forEach(function(tp){
+    var n=S.py.counts[tp.k]||0,pool=pyPool(tp.k).slice(),got=0,guard=0;
+    while(got<n&&guard<200){
+      guard++;
+      if(!pool.length)break;
+      /* 40% 概率优先挑薄弱项 */
+      var cand=null;
+      if(r()<0.4){
+        var ws=pool.filter(function(it){return weakScore(it)>0&&!used[it.key]});
+        if(ws.length){ws.sort(function(a,b){return weakScore(b)-weakScore(a)});cand=ws[Math.min(ws.length-1,ri(r,Math.min(3,ws.length)))]}
+      }
+      if(!cand){
+        var ok=pool.filter(function(it){return !used[it.key]});
+        if(!ok.length)break;
+        cand=ok[ri(r,ok.length)];
+      }
+      /* 避免同一天出现重复音节 */
+      var ks=itemKeys(cand),dup=false;
+      ks.forEach(function(k){if(used['@'+k])dup=true});
+      if(dup&&guard<150)continue;
+      used[cand.key]=1;ks.forEach(function(k){used['@'+k]=1});
+      list.push(cand);got++;
+    }
+  });
+  return shuffle(list,r);
+}
+
+/* ================= 会话 ================= */
+var SS=null;
+function offGet(kind){var o=S.off[todayKey()]||{};return o[kind==='math'?'m':'p']||0}
+function offInc(kind){var d=todayKey();if(!S.off[d])S.off[d]={m:0,p:0};S.off[d][kind==='math'?'m':'p']++;save()}
+function startMath(list){
+  SS={kind:'math',list:list||genMath(hash(todayKey()+'|m|'+offGet('math'))),i:0,inp:[],ok:0,wrong:[],t0:Date.now(),lock:0};
+  if(!list)SS.redo=0;
+  TAB='math';render();syncTabs();window.scrollTo(0,0);
+}
+function startPy(){
+  SS={kind:'py',list:genPy(hash(todayKey()+'|p|'+offGet('py'))),i:0,ok:0,wrong:[],t0:Date.now(),lock:0};
+  TAB='py';render();syncTabs();window.scrollTo(0,0);
+}
+function finish(){
+  var d=todayKey(),R=rec(d),ms=Date.now()-SS.t0,k=R[SS.kind];
+  k.t+=SS.list.length;k.c+=SS.ok;k.ms=(k.ms||0)+ms;
+  SS.wrong.forEach(function(w){
+    if(SS.kind==='math'){
+      k.w.unshift({q:w.q,ans:w.ans,t:w.t,cn:w.cn});
+    }else{
+      k.w.unshift({py:w.py,hz:w.hz,tag:w.tag});
+      S.weak[w.py]=(S.weak[w.py]||0)+1;
+    }
+  });
+  SS.list.forEach(function(q){
+    if(SS.kind==='math'){var t=q.t;if(!k.ty[t])k.ty[t]={t:0,c:0};k.ty[t].t++;k.ty[t].c++}
+    else{var tg=q.tag;if(!k.ty[tg])k.ty[tg]={t:0,c:0};k.ty[tg].t++;k.ty[tg].c++}
+  });
+  SS.wrong.forEach(function(w){
+    if(SS.kind==='math'){if(k.ty[w.t])k.ty[w.t].c--}
+    else{if(k.ty[w.tag])k.ty[w.tag].c--}
+  });
+  if(k.w.length>60)k.w.length=60;
+  save();
+}
+
+/* ================= 渲染路由 ================= */
+var TAB='home';
+function syncTabs(){
+  var t=TAB,practice=(t==='math'||t==='py'||t==='mdone'||t==='pdone');
+  document.querySelectorAll('#tabs button').forEach(function(b){
+    b.classList.toggle('on',b.dataset.t===t||(practice&&b.dataset.t==='home'));
+  });
+}
+function go(t){
+  TAB=t;
+  if(t!=='math'&&t!=='py'&&t!=='mdone'&&t!=='pdone')SS=null;
+  render();syncTabs();window.scrollTo(0,0);
+}
+function render(){
+  var h='';
+  if(TAB==='home')h=viewHome();
+  else if(TAB==='stat')h=viewStat();
+  else if(TAB==='set')h=viewSet();
+  else if(TAB==='math')h=viewMath();
+  else if(TAB==='py')h=viewPy();
+  else if(TAB==='mdone')h=viewDone('math');
+  else if(TAB==='pdone')h=viewDone('py');
+  $('#app').innerHTML=h;
+  if(TAB==='math')bindMath();
+}
+
+/* ================= 今日 ================= */
+function viewHome(){
+  var d=todayKey(),R=todayRec(),m=R.math,p=R.py;
+  var mPct=pct(m.c,m.t),pPct=pct(p.c,p.t);
+  var h='<div class="hd"><div class="avatar">'+esc(S.child.slice(0,1))+'</div><div class="grow"><div class="tt">'+esc(S.child)+'，今天也要加油鸭</div><div class="dt">'+cnDate(d)+' · '+['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][new Date().getDay()]+'</div></div></div>';
+
+  h+='<div class="card"><div class="between"><h3 style="margin:0">📅 今日进度</h3><span class="muted">连续打卡 '+streak()+' 天</span></div>';
+  h+='<div class="grid4" style="margin-top:10px">';
+  h+='<div class="stat"><b style="color:var(--math)">'+m.t+'</b><span>数学已练</span></div>';
+  h+='<div class="stat"><b style="color:var(--math)">'+(m.t?mPct:0)+'%</b><span>数学正确</span></div>';
+  h+='<div class="stat"><b style="color:var(--py)">'+p.t+'</b><span>拼音已练</span></div>';
+  h+='<div class="stat"><b style="color:var(--py)">'+(p.t?pPct:0)+'%</b><span>拼音读对</span></div>';
+  h+='</div></div>';
+
+  h+='<div class="entry m" onclick="startMath()"><div class="nm">🔢 数学计算</div><div class="bar"><i style="width:'+Math.min(100,mPct)+'%"></i></div><div class="pg">'+(m.t?m.c+'/'+m.t:'开练')+'</div></div>';
+  h+='<div class="row" style="margin:-4px 0 12px"><div class="chip" onclick="quickCount(\'math\')">改题量</div><div class="chip" onclick="newSet(\'math\')">换一组</div><div class="chip" onclick="go(\'stat\')">看统计</div></div>';
+
+  var pyn=0;PY_TYPES.forEach(function(t){pyn+=S.py.counts[t.k]||0});
+  h+='<div class="entry p" onclick="startPy()"><div class="nm">🗣️ 拼音朗读</div><div class="bar"><i style="width:'+Math.min(100,pPct)+'%"></i></div><div class="pg">'+(p.t?p.c+'/'+p.t:'开练')+'</div></div>';
+  h+='<div class="row" style="margin:-4px 0 12px"><div class="chip" onclick="quickCount(\'py\')">改题量</div><div class="chip" onclick="newSet(\'py\')">换一组</div><div class="chip" onclick="go(\'set\')">题型设置</div></div>';
+
+  /* 薄弱提醒 */
+  var wk=topWeak(6);
+  if(wk.length){
+    h+='<div class="card"><h3>💡 最近容易读错的音</h3><div class="row" style="flex-wrap:wrap">';
+    wk.forEach(function(w){h+='<span class="chip" style="font-size:15px;font-weight:800;letter-spacing:1px">'+esc(w.k)+' <span class="badge">'+w.v+'</span></span>'});
+    h+='</div><div class="muted" style="margin-top:8px">这些音会优先出现在明天的练习里</div></div>';
+  }
+  var mw=mathWeakTop();
+  if(mw)h+='<div class="card"><h3>🧮 数学小提醒</h3><div class="muted">'+mw+'</div></div>';
+  return h;
+}
+function levelName(){return S.math.level==='easy'?'5以内':(S.math.level==='hard'?'10以内·全题型':'10以内')}
+function typeNames(){return S.math.types.map(function(k){var t=MATH_TYPES.filter(function(x){return x.k===k})[0];return t?t.n:''}).join('、')}
+function pyDesc(){var a=[];PY_TYPES.forEach(function(t){if(S.py.counts[t.k]>0)a.push(t.n+'×'+S.py.counts[t.k])});return a.join('  ')}
+function streak(){
+  var n=0,d=new Date();
+  for(var i=0;i<400;i++){
+    var k=dk(d),r=S.records[k];
+    if(r&&((r.math&&r.math.t)||(r.py&&r.py.t)))n++;
+    else if(i>0)break;
+    else if(!r&&i===0){/* 今天还没练，从昨天算 */}
+    d.setDate(d.getDate()-1);
+    if(n===0&&i>2)break;
+  }
+  return n;
+}
+function topWeak(n){
+  var a=[];for(var k in S.weak)a.push({k:k,v:S.weak[k]});
+  a.sort(function(x,y){return y.v-x.v});return a.slice(0,n);
+}
+function mathWeakTop(){
+  var ty={},tot=0,d=new Date();
+  for(var i=0;i<14;i++){
+    var r=S.records[dk(d)];
+    if(r&&r.math&&r.math.ty){for(var k in r.math.ty){if(!ty[k])ty[k]={t:0,c:0};ty[k].t+=r.math.ty[k].t;ty[k].c+=r.math.ty[k].c}}
+    d.setDate(d.getDate()-1);
+  }
+  var worst=null,wv=101;
+  for(var k in ty){if(ty[k].t<3)continue;var p=pct(ty[k].c,ty[k].t);if(p<wv){wv=p;worst=k}}
+  if(!worst||wv>=85)return '';
+  var t=MATH_TYPES.filter(function(x){return x.k===worst})[0];
+  return '最近「'+(t?t.n:worst)+'」正确率 '+wv+'%，明天练习里多练几道这类题吧。';
+}
+function quickCount(kind){
+  var v=kind==='math'?S.math.count:pyTotal();
+  openSheet('<h3 style="margin:0 0 4px">'+(kind==='math'?'数学':'拼音')+'题量</h3><div class="muted">每天都能改，只影响今天的练习</div>',
+    '<div class="card" style="box-shadow:none;padding:14px 0"><div class="set"><div><div class="lb">今天做几道/几张</div></div>'+stepperHTML('qc',v,1,60,1)+'</div>'+
+    '<div class="muted" style="margin-top:6px">'+(kind==='math'?'数学题数':'拼音卡片数')+'：改完点确定就开始新的一组</div></div>',
+    [{t:'确定',c:'p',f:function(){
+      var nv=STEPV.qc;
+      if(kind==='math'){S.math.count=nv}else{distributePy(nv)}
+      save();closeSheet();newSet(kind);
+    }},{t:'取消',c:'g',f:closeSheet}]);
+}
+function distributePy(n){
+  var ks=PY_TYPES.filter(function(t){return (S.py.counts[t.k]||0)>0}).map(function(t){return t.k});
+  if(!ks.length)ks=['zs'];
+  var base=Math.floor(n/ks.length),rem=n-base*ks.length;
+  PY_TYPES.forEach(function(t){S.py.counts[t.k]=0});
+  ks.forEach(function(k,i){S.py.counts[k]=base+(i<rem?1:0)});
+}
+function pyTotal(){var n=0;PY_TYPES.forEach(function(t){n+=S.py.counts[t.k]||0});return n}
+function newSet(kind){offInc(kind);if(kind==='math')startMath();else startPy()}
+
+/* ================= 数学练习 ================= */
+function viewMath(){
+  var q=SS.list[SS.i],n=SS.list.length;
+  var h='<div class="ptop"><button onclick="quitMath()" style="font-size:20px">‹</button><div class="bar"><i style="width:'+(SS.i/n*100)+'%"></i></div><div class="cnt">'+(SS.i+1)+'/'+n+'</div></div>';
+  h+='<div class="card"><div class="qbox"><div class="qtext" id="qtext">'+qText(q,SS.inp,SS.state)+'</div><div class="qtip '+(SS.state||'')+'" id="qtip">'+(SS.tip||'&nbsp;')+'</div></div>';
+  if(q.k==='cmp'){
+    h+='<div class="btnrow"><button class="btn g" onclick="ansCmp(\'>\')">＞ 大于</button><button class="btn g" onclick="ansCmp(\'<\')">＜ 小于</button><button class="btn g" onclick="ansCmp(\'=\')">＝ 等于</button></div>';
+  }else if(q.k==='split'){
+    h+='<div class="kb">'+numKeys()+'</div><button class="btn p" style="margin-top:10px" onclick="submit()">确定</button>';
+  }else{
+    h+='<div class="kb">'+numKeys()+'</div><button class="btn p" style="margin-top:10px" onclick="submit()">确定</button>';
+  }
+  h+='</div>';
+  if(SS.redo)h+='<div class="muted" style="text-align:center">错题重做模式</div>';
+  return h;
+}
+function numKeys(){
+  var h='';
+  [1,2,3,4,5,6,7,8,9].forEach(function(n){h+='<button onclick="num('+n+')">'+n+'</button>'});
+  h+='<button onclick="num(0)">0</button><button onclick="num(10)">10</button><button class="fn" onclick="del()">⌫</button><button class="fn" onclick="clearInp()">清空</button>';
+  return h;
+}
+function bindMath(){}
+function num(n){
+  if(SS.lock)return;
+  var q=SS.list[SS.i];
+  if(q.k==='split'){
+    if(SS.inp[0]===undefined||SS.inp[0]===null)SS.inp[0]=n;
+    else if(SS.inp[1]===undefined||SS.inp[1]===null)SS.inp[1]=n;
+  }else{SS.inp[0]=n}
+  SS.state='';SS.tip='';paintQ();
+}
+function del(){if(SS.lock)return;var q=SS.list[SS.i];
+  if(q.k==='split'){if(SS.inp[1]!==undefined&&SS.inp[1]!==null)SS.inp[1]=null;else SS.inp[0]=null}
+  else SS.inp[0]=null;
+  SS.state='';SS.tip='';paintQ();
+}
+function clearInp(){if(SS.lock)return;SS.inp=[];SS.state='';SS.tip='';paintQ()}
+function paintQ(){
+  var q=SS.list[SS.i];
+  $('#qtext').innerHTML=qText(q,SS.inp,SS.state);
+  $('#qtip').className='qtip '+(SS.state||'');
+  $('#qtip').innerHTML=(SS.tip||'&nbsp;');
+}
+function ansCmp(v){if(SS.lock)return;SS.inp[0]=v;submit()}
+var PRAISE=['太棒了！','答对啦！','真厉害！','好聪明！','完全正确！','棒极了！'];
+function submit(){
+  if(SS.lock)return;
+  var q=SS.list[SS.i];
+  if(q.k==='split'){
+    if(SS.inp[0]===undefined||SS.inp[0]===null||SS.inp[1]===undefined||SS.inp[1]===null){toast('两个空都要填哦');return}
+  }else{
+    if(SS.inp[0]===undefined||SS.inp[0]===null){toast('先选一个答案');return}
+  }
+  var good;
+  if(q.k==='split')good=(SS.inp[0]+SS.inp[1]===q.ans);
+  else if(q.k==='cmp')good=(SS.inp[0]===q.ans);
+  else good=(SS.inp[0]===q.ans);
+  SS.lock=1;
+  if(good){
+    SS.ok++;SS.state='ok';SS.tip=pick(Math.random,PRAISE);
+    paintQ();
+    setTimeout(function(){next()},850);
+  }else{
+    SS.state='no';
+    if(q.k==='split')SS.tip='再想想：两个数加起来要等于 '+q.ans;
+    else if(q.k==='cmp')SS.tip='正确答案：'+q.ans;
+    else SS.tip='正确答案：'+q.ans+'，记住它';
+    paintQ();
+    $('#qtext').classList.add('shake');
+    var shown=(q.k==='split')?(SS.inp[0]+'+'+SS.inp[1]):SS.inp[0];
+    SS.wrong.push({q:qText(q,[],''),ans:q.ans,cn:shown,t:q.t});
+    setTimeout(function(){
+      SS.lock=0;SS.tip=SS.tip+' （点下面继续）';paintQ();
+      var box=$('#qtext').parentNode;
+      var b=document.createElement('button');
+      b.className='btn g';b.style.marginTop='14px';b.textContent='我记住了，下一题';
+      b.onclick=function(){next()};
+      var old=box.parentNode.querySelector('.nextbtn');if(old)old.remove();
+      b.className+=' nextbtn';box.parentNode.insertBefore(b,box.nextSibling);
+    },600);
+  }
+}
+function next(){
+  SS.i++;SS.inp=[];SS.state='';SS.tip='';SS.lock=0;
+  if(SS.i>=SS.list.length){finish();TAB='mdone';render();window.scrollTo(0,0);return}
+  render();
+}
+function quitMath(){
+  if(SS.i>0){
+    openSheet('<h3 style="margin:0">要结束这一组吗？</h3><div class="muted" style="margin-top:6px">已经做的 '+SS.i+' 题会被记录下来</div>',
+      '',[{t:'记录并退出',c:'p',f:function(){SS.list=SS.list.slice(0,SS.i);finish();closeSheet();go('home')}},{t:'继续练习',c:'g',f:closeSheet},{t:'直接放弃',c:'g',f:function(){closeSheet();go('home')}}]);
+  }else go('home');
+}
+
+/* ================= 拼音练习 ================= */
+function viewPy(){
+  var it=SS.list[SS.i],n=SS.list.length;
+  var h='<div class="ptop"><button onclick="quitPy()" style="font-size:20px">‹</button><div class="bar p"><i style="width:'+(SS.i/n*100)+'%"></i></div><div class="cnt">'+(SS.i+1)+'/'+n+'</div></div>';
+  var tp=PY_TYPES.filter(function(t){return t.k===it.tag})[0];
+  h+='<div class="pcard">';
+  h+='<div class="tag">'+(tp?tp.n:'拼音')+'</div>';
+  if(it.kind==='pair'){
+    h+='<div class="py"><span class="a">'+esc(it.a.py)+'</span><span class="sep">/</span><span class="b">'+esc(it.b.py)+'</span></div>';
+    if(S.py.showHz&&it.a.hz&&it.a.hz!=='?'){
+      h+='<div class="hz">'+esc(it.a.hz)+' · '+esc(it.b.hz)+'</div>';
+      h+='<div class="wd">'+esc(it.a.w)+'　'+esc(it.b.w)+'</div>';
+    }
+    h+='<div class="muted" style="margin-top:14px">两个音都要读准哦</div>';
+  }else if(it.kind==='tone'){
+    h+='<div class="tone-row">'+it.items.map(function(x){return '<div>'+esc(x.py)+'<small>'+(S.py.showHz&&x.hz!=='?'?esc(x.hz):'')+'</small></div>'}).join('')+'</div>';
+    h+='<div class="wd">'+it.items.map(function(x){return esc(x.w)}).join(' · ')+'</div>';
+    h+='<div class="muted" style="margin-top:14px">四个声调，一个一个读</div>';
+  }else{
+    h+='<div class="py"><span class="a">'+esc(it.a.py)+'</span></div>';
+    if(S.py.showHz){h+='<div class="hz">'+esc(it.a.hz)+'</div>';}
+    h+='<div class="wd">'+esc(it.a.w)+'</div>';
+  }
+  h+='</div>';
+  if(S.py.speak){
+    h+='<button class="btn g" style="margin-top:12px" onclick="speak()">🔊 听一听示范</button>';
+  }
+  h+='<div class="btnrow" style="margin-top:12px"><button class="btn ok" onclick="pyAns(1)">👍 读对了</button><button class="btn no" onclick="pyAns(0)">🔁 再练一次</button></div>';
+  h+='<div class="muted" style="text-align:center;margin-top:10px">读对了点左边；没读准点右边，明天会再出现</div>';
+  return h;
+}
+function speak(){
+  var it=SS.list[SS.i];
+  var txt=it.kind==='tone'?it.items.map(function(x){return x.hz}).join('，'):(it.kind==='pair'?it.a.hz+'，'+it.b.hz:it.a.hz);
+  try{
+    if(!window.speechSynthesis){toast('这个浏览器不支持朗读');return}
+    speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(txt);u.lang='zh-CN';u.rate=0.8;
+    speechSynthesis.speak(u);
+  }catch(e){toast('朗读不可用')}
+}
+function pyAns(ok){
+  if(SS.lock)return;
+  var it=SS.list[SS.i];
+  if(ok)SS.ok++;
+  else{
+    var pys=itemKeys(it);
+    SS.wrong.push({py:pys.join(' / '),hz:(it.kind==='tone'?it.items.map(function(x){return x.py}).join(' '):(it.kind==='pair'?it.a.hz+'·'+it.b.hz:it.a.hz)),tag:it.tag});
+  }
+  SS.i++;SS.lock=0;
+  if(SS.i>=SS.list.length){finish();TAB='pdone';render();window.scrollTo(0,0);return}
+  render();
+}
+function quitPy(){
+  if(SS.i>0){
+    openSheet('<h3 style="margin:0">要结束这一组吗？</h3><div class="muted" style="margin-top:6px">已经读的 '+SS.i+' 张会被记录下来</div>',
+      '',[{t:'记录并退出',c:'p',f:function(){SS.list=SS.list.slice(0,SS.i);finish();closeSheet();go('home')}},{t:'继续练习',c:'g',f:closeSheet},{t:'直接放弃',c:'g',f:function(){closeSheet();go('home')}}]);
+  }else go('home');
+}
+
+/* ================= 完成页 ================= */
+function viewDone(kind){
+  var n=SS.list.length,ok=SS.ok,rate=pct(ok,n),ms=Date.now()-SS.t0;
+  var star=rate>=90?3:(rate>=70?2:(rate>=50?1:0));
+  var h='<div class="card"><div class="done">';
+  h+='<div class="em">'+(star>=3?'🏆':(star===2?'🎉':(star===1?'👍':'💪')))+'</div>';
+  h+='<h2>'+(kind==='math'?'数学练习完成':'拼音练习完成')+'</h2>';
+  h+='<div class="stars">'+(star?'★'.repeat(star):'')+'<span style="color:#E3D6C4">'+(star?'☆'.repeat(3-star):'☆☆☆')+'</span></div>';
+  h+='<div class="grid4" style="margin-top:8px">';
+  h+='<div class="stat"><b>'+n+'</b><span>'+(kind==='math'?'总题数':'总卡片')+'</span></div>';
+  h+='<div class="stat"><b style="color:var(--good)">'+ok+'</b><span>'+(kind==='math'?'答对':'读对')+'</span></div>';
+  h+='<div class="stat"><b style="color:'+(rate>=80?'var(--good)':'var(--warn)')+'">'+rate+'%</b><span>正确率</span></div>';
+  h+='<div class="stat"><b>'+Math.round(ms/1000)+'s</b><span>用时</span></div>';
+  h+='</div>';
+  h+='<div class="muted" style="margin-top:10px">'+(rate>=90?'全部掌握啦，太厉害了！':(rate>=70?'不错哦，错的再看一遍就会了':'别灰心，我们再练一组就熟了'))+'</div>';
+  h+='</div></div>';
+  if(SS.wrong.length){
+    h+='<div class="card"><h3>'+(kind==='math'?'❌ 这几道再看看':'🔁 这几个音还要练')+'</h3>';
+    SS.wrong.forEach(function(w){
+      h+='<div class="wrongitem"><span>'+(kind==='math'?w.q.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()+' 　正确答案 <b>'+w.ans+'</b> <span class="muted">（答了 '+w.cn+'）</span>':'<b style="font-size:16px;letter-spacing:1px">'+esc(w.py)+'</b> <span class="muted">'+esc(w.hz)+'</span>')+'</span></div>';
+    });
+    h+='</div>';
+  }
+  h+='<button class="btn p" onclick="newSet(\''+kind+'\')">再来一组（全新题目）</button>';
+  if(kind==='math'&&SS.wrong.length)h+='<button class="btn g" style="margin-top:10px" onclick="redoMath()">只重做刚才的错题</button>';
+  h+='<button class="btn g" style="margin-top:10px" onclick="go(\'home\')">回到今日</button>';
+  h+='<button class="btn g" style="margin-top:10px" onclick="go(\'stat\')">看看统计数据</button>';
+  return h;
+}
+function redoMath(){
+  var list=SS.wrong.map(function(w){
+    return {t:w.t,d:null,ans:w.ans,k:'num',redoText:w.q};
+  }).filter(function(q){
+    return true;
+  });
+  /* 错题重做：用原始题目结构重新生成一道同类型同答案的题 */
+  var out=SS.wrong.map(function(w){
+    var q={t:w.t,ans:w.ans,k:w.t==='split'?'split':(w.t==='cmp'?'cmp':'num'),redoText:w.q};
+    if(w.t==='add'||w.t==='sub'||w.t==='fill'||w.t==='chain'||w.t==='mix'){
+      var s=w.q.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+      q.d=mkDisp(s.split(' ').map(function(x){return (x==='□'||x==='?')?{v:x,b:1}:x}));
+    }else if(w.t==='cmp'){
+      var s=w.q.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+      q.d=mkDisp(s.split(' ').map(function(x){return (x==='○'||x==='?')?{v:'○',b:1}:x}));
+    }else{
+      var s=w.q.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+      q.d=mkDisp(s.split(' ').map(function(x){return (x==='□')?{v:'□',b:1}:x}));
+    }
+    return q;
+  });
+  startMath(out);
+  SS.redo=1;render();
+}
+
+/* ================= 统计 ================= */
+function lastDays(n){
+  var a=[],d=new Date();
+  for(var i=n-1;i>=0;i--){var x=new Date();x.setDate(x.getDate()-i);a.push(dk(x))}
+  return a;
+}
+function viewStat(){
+  var days=lastDays(14),md=[],pd=[],any=false;
+  days.forEach(function(k){
+    var r=S.records[k];
+    var m=r&&r.math&&r.math.t?r.math.c/r.math.t:null;
+    var p=r&&r.py&&r.py.t?r.py.c/r.py.t:null;
+    if(m!==null||p!==null)any=true;
+    md.push(m);pd.push(p);
+  });
+  var R=todayRec(),tot=0,tc=0,pt=0,pc=0,dsum=0;
+  for(var k in S.records){var r=S.records[k];tot+=r.math.t;tc+=r.math.c;pt+=r.py.t;pc+=r.py.c;dsum++}
+  var h='<div class="hd"><div class="grow"><div class="tt">📊 练习统计</div><div class="dt">累计 '+dsum+' 天 · 数学 '+tot+' 题 · 拼音 '+pt+' 张</div></div></div>';
+  h+='<div class="grid4">';
+  h+='<div class="stat"><b style="color:var(--math)">'+pct(tc,tot)+'%</b><span>数学总正确率</span></div>';
+  h+='<div class="stat"><b style="color:var(--py)">'+pct(pc,pt)+'%</b><span>拼音总掌握率</span></div>';
+  h+='<div class="stat"><b>'+streak()+'</b><span>连续打卡(天)</span></div>';
+  h+='<div class="stat"><b>'+dsum+'</b><span>练习天数</span></div>';
+  h+='</div>';
+
+  h+='<div class="card" style="margin-top:12px"><h3>📈 近 14 天正确率</h3>';
+  if(any){
+    h+='<div class="muted" style="margin-bottom:6px"><span style="color:var(--math)">■</span> 数学　<span style="color:var(--py)">■</span> 拼音</div>';
+    h+=trendSVG(md,pd,days);
+  }else h+='<div class="muted">还没有练习记录，做完一组就能看到曲线啦</div>';
+  h+='</div>';
+
+  h+='<div class="card"><h3>🗓️ 打卡日历</h3><div class="wk"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div><div class="cal">'+calHTML(35)+'</div>';
+  h+='<div class="muted" style="margin-top:8px">颜色越深，当天练得越多</div></div>';
+
+  var mty=aggTy('math'),pty=aggTy('py');
+  if(Object.keys(mty).length){
+    h+='<div class="card"><h3>🧮 数学各题型正确率</h3>';
+    for(var k in mty){var o=mty[k],p=pct(o.c,o.t);var nm=(MATH_TYPES.filter(function(x){return x.k===k})[0]||{n:k}).n;
+      h+='<div style="margin-bottom:10px"><div class="between" style="font-size:13px"><span>'+nm+'</span><span class="muted">'+o.c+'/'+o.t+' · '+p+'%</span></div><div class="barmini"><i style="width:'+p+'%;background:'+(p>=85?'var(--good)':(p>=60?'var(--warn)':'var(--bad)'))+'"></i></div></div>'}
+    h+='</div>';
+  }
+  if(Object.keys(pty).length){
+    h+='<div class="card"><h3>🗣️ 拼音各类掌握率</h3>';
+    for(var k in pty){var o=pty[k],p=pct(o.c,o.t);var nm=(PY_TYPES.filter(function(x){return x.k===k})[0]||{n:k}).n;
+      h+='<div style="margin-bottom:10px"><div class="between" style="font-size:13px"><span>'+nm+'</span><span class="muted">'+o.c+'/'+o.t+' · '+p+'%</span></div><div class="barmini"><i style="width:'+p+'%;background:'+(p>=85?'var(--good)':(p>=60?'var(--warn)':'var(--bad)'))+'"></i></div></div>'}
+    h+='</div>';
+  }
+
+  var wk=topWeak(12);
+  if(wk.length){
+    h+='<div class="card"><h3>🔁 易错拼音 TOP</h3><div class="list">';
+    wk.forEach(function(w){h+='<div class="wrongitem"><b style="font-size:16px;letter-spacing:1px">'+esc(w.k)+'</b><span class="badge">读错 '+w.v+' 次</span></div>'});
+    h+='</div><div class="muted" style="margin-top:8px">系统会反复安排这些音，直到读对为止</div></div>';
+  }
+
+  var mw=collectMathWrong(12);
+  if(mw.length){
+    h+='<div class="card"><h3>❌ 数学易错题</h3><div class="list">';
+    mw.forEach(function(w){h+='<div class="wrongitem"><span>'+w.q+' = <b>'+w.ans+'</b></span><span class="badge">'+cnDate(w.d)+'</span></div>'});
+    h+='</div><button class="btn g" style="margin-top:12px" onclick="redoAll()">重做这些错题</button></div>';
+  }
+
+  /* 历史 */
+  var ks=Object.keys(S.records).sort().reverse().slice(0,15);
+  if(ks.length){
+    h+='<div class="card"><h3>📋 每日记录</h3><div class="list">';
+    ks.forEach(function(k){
+      var r=S.records[k],mp=pct(r.math.c,r.math.t),pp=pct(r.py.c,r.py.t);
+      h+='<div class="li" onclick="openDay(\''+k+'\')"><div class="between"><span class="d">'+cnDate(k)+' ›</span><span class="muted">'+(r.math.t?Math.round(r.math.ms/1000)+'s':'')+'</span></div>';
+      h+='<div class="v"><span style="color:var(--math)">数学 '+r.math.c+'/'+r.math.t+'（'+mp+'%）</span><span style="color:var(--py)">拼音 '+r.py.c+'/'+r.py.t+'（'+pp+'%）</span></div>';
+      h+='<div class="barmini"><i style="width:'+((mp+pp)/2)+'%;background:var(--math)"></i></div></div>';
+    });
+    h+='</div></div>';
+  }
+  return h;
+}
+function aggTy(kind){
+  var ty={},d=new Date();
+  for(var i=0;i<30;i++){
+    var r=S.records[dk(d)];
+    if(r&&r[kind]&&r[kind].ty){for(var k in r[kind].ty){if(!ty[k])ty[k]={t:0,c:0};ty[k].t+=r[kind].ty[k].t;ty[k].c+=r[kind].ty[k].c}}
+    d.setDate(d.getDate()-1);
+  }
+  return ty;
+}
+function collectMathWrong(n){
+  var out=[],ks=Object.keys(S.records).sort().reverse();
+  for(var i=0;i<ks.length&&out.length<n;i++){
+    var r=S.records[ks[i]];
+    (r.math.w||[]).forEach(function(w){if(out.length<n)out.push({q:w.q.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(),ans:w.ans,t:w.t,d:ks[i]})});
+  }
+  return out;
+}
+function redoAll(){
+  var mw=collectMathWrong(20);
+  var out=mw.map(function(w){
+    var s=w.q.replace(/\s+/g,' ').trim();
+    var q={t:w.t,ans:w.ans,k:(w.t==='cmp'?'cmp':(w.t==='split'?'split':'num'))};
+    q.d=mkDisp(s.split(' ').map(function(x){return (x==='□'||x==='?'||x==='○')?{v:x,b:1}:x}));
+    return q;
+  }).filter(function(q){return q.d.length>1});
+  if(!out.length){toast('暂时没有错题');return}
+  startMath(out);SS.redo=1;render();
+}
+function openDay(k){
+  var r=S.records[k];if(!r)return;
+  var mp=pct(r.math.c,r.math.t),pp=pct(r.py.c,r.py.t);
+  var b='<div class="card" style="box-shadow:none;padding:12px 0">';
+  b+='<div class="grid4"><div class="stat"><b style="color:var(--math)">'+r.math.c+'/'+r.math.t+'</b><span>数学</span></div>';
+  b+='<div class="stat"><b style="color:var(--math)">'+mp+'%</b><span>正确率</span></div>';
+  b+='<div class="stat"><b style="color:var(--py)">'+r.py.c+'/'+r.py.t+'</b><span>拼音</span></div>';
+  b+='<div class="stat"><b style="color:var(--py)">'+pp+'%</b><span>读对率</span></div></div>';
+  if((r.math.w||[]).length){
+    b+='<div style="margin-top:12px;font-weight:800;font-size:14px">❌ 数学错题</div>';
+    r.math.w.slice(0,12).forEach(function(w){
+      b+='<div class="wrongitem"><span>'+w.q.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()+'　答案 <b>'+w.ans+'</b></span><span class="muted">答了 '+w.cn+'</span></div>';
+    });
+  }
+  if((r.py.w||[]).length){
+    b+='<div style="margin-top:12px;font-weight:800;font-size:14px">🔁 读错的音</div>';
+    r.py.w.slice(0,12).forEach(function(w){
+      b+='<div class="wrongitem"><b style="font-size:16px;letter-spacing:1px">'+esc(w.py)+'</b><span class="muted">'+esc(w.hz)+'</span></div>';
+    });
+  }
+  if(!(r.math.w||[]).length&&!(r.py.w||[]).length)b+='<div class="muted" style="margin-top:12px">这一天全对，没有错题 🎉</div>';
+  b+='</div>';
+  openSheet('<h3 style="margin:0 0 4px">'+cnDate(k)+' 练习详情</h3><div class="muted">用时 '+(r.math.t?Math.round(r.math.ms/1000)+' 秒':'—')+'</div>',b,[{t:'知道了',c:'p',f:closeSheet}]);
+}
+function calHTML(n){
+  var d=new Date();d.setDate(d.getDate()-(n-1));
+  var startPad=new Date(d).getDay();
+  var h='';
+  for(var i=0;i<startPad;i++)h+='<div style="background:transparent"></div>';
+  for(var i=0;i<n;i++){
+    var k=dk(d),r=S.records[k];
+    var mt=r&&r.math?r.math.t:0,pt=r&&r.py?r.py.t:0;
+    var goal=(S.math.count||10)+(pyTotal()||10);
+    var v=(mt+pt)/goal;
+    var lv=mt+pt===0?0:(v>=1?3:(v>=0.5?2:1));
+    h+='<div class="l'+lv+(k===todayKey()?' td':'')+'">'+(+k.split('-')[2])+'</div>';
+    d.setDate(d.getDate()+1);
+  }
+  return h;
+}
+function trendSVG(md,pd,days){
+  var W=300,H=90,pl=6,pr=6,pb=16,pt=6;
+  var n=md.length,step=(W-pl-pr)/(n-1);
+  function y(v){return H-pb-v*(H-pt-pb)}
+  function path(arr){
+    var segs=[],cur=[];
+    arr.forEach(function(v,i){
+      if(v===null){if(cur.length)segs.push(cur);cur=[]}
+      else cur.push([pl+i*step,y(v)]);
+    });
+    if(cur.length)segs.push(cur);
+    return segs.map(function(s){return 'M'+s.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1)}).join('L')}).join(' ');
+  }
+  var h='<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="90" style="display:block">';
+  [0,0.5,1].forEach(function(g){h+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y(g)+'" y2="'+y(g)+'" stroke="#F0E4D6" stroke-width="1"/>';});
+  h+='<path d="'+path(md)+'" fill="none" stroke="var(--math)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
+  h+='<path d="'+path(pd)+'" fill="none" stroke="var(--py)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
+  md.forEach(function(v,i){if(v!==null)h+='<circle cx="'+(pl+i*step).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="2.6" fill="var(--math)"/>'});
+  pd.forEach(function(v,i){if(v!==null)h+='<circle cx="'+(pl+i*step).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="2.6" fill="var(--py)"/>'});
+  h+='<text x="'+pl+'" y="'+(H-3)+'" font-size="9" fill="#8A7C6B">'+cnDate(days[0])+'</text>';
+  h+='<text x="'+(W-pr)+'" y="'+(H-3)+'" font-size="9" fill="#8A7C6B" text-anchor="end">今天</text>';
+  h+='</svg>';
+  return h;
+}
+
+/* ================= 设置 ================= */
+function viewSet(){
+  var h='<div class="hd"><div class="grow"><div class="tt">⚙️ 设置</div><div class="dt">题量和题型随时可以改</div></div></div>';
+  h+='<div class="card"><h3>👧 基本信息</h3><div class="set"><div class="grow"><div class="lb">孩子的名字</div><div class="sb">显示在首页</div></div><input id="cname" value="'+esc(S.child)+'" style="width:120px;padding:9px;border:1px solid var(--line);border-radius:11px;text-align:right;font-size:15px" onchange="setName(this.value)"></div></div>';
+
+  h+='<div class="card"><h3>🔢 数学</h3>';
+  h+='<div class="set"><div class="grow"><div class="lb">每天题量</div><div class="sb">今天想做几道就设几道</div></div>'+stepperHTML('mc',S.math.count,1,60,1,function(v){S.math.count=v;save()})+'</div>';
+  h+='<div class="set"><div class="grow"><div class="lb">难度</div><div class="sb">'+levelName()+'</div></div><div class="row">'+['easy','std','hard'].map(function(k){return '<button class="chip'+(S.math.level===k?' on':'')+'" onclick="setLevel(\''+k+'\')">'+({easy:'5以内',std:'标准',hard:'全题型'})[k]+'</button>'}).join('')+'</div></div>';
+  h+='<div style="padding-top:12px"><div class="lb">题型（至少选一个）</div><div class="chips">'+MATH_TYPES.map(function(t){return '<button class="chip'+(S.math.types.indexOf(t.k)>=0?' on':'')+'" onclick="toggleType(\''+t.k+'\')">'+t.n+' <span style="opacity:.7">'+t.d+'</span></button>'}).join('')+'</div></div>';
+  h+='</div>';
+
+  var tot=pyTotal();
+  h+='<div class="card"><h3>🗣️ 拼音 <span class="muted" style="font-weight:400">共 '+tot+' 张</span></h3>';
+  PY_TYPES.forEach(function(t){
+    h+='<div class="set"><div class="grow"><div class="lb">'+t.n+'</div><div class="sb">'+t.d+'</div></div>'+stepperHTML('pc_'+t.k,S.py.counts[t.k]||0,0,20,1,function(v){S.py.counts[t.k]=v;save()})+'</div>';
+  });
+  h+='<div class="set"><div class="grow"><div class="lb">显示汉字</div><div class="sb">关掉后只看拼音，难度更高</div></div><button class="chip'+(S.py.showHz?' on':'')+'" onclick="toggle(\'showHz\')">'+(S.py.showHz?'开':'关')+'</button></div>';
+  h+='<div class="set"><div class="grow"><div class="lb">朗读示范按钮</div><div class="sb">手机语音可能不标准，仅供参考</div></div><button class="chip'+(S.py.speak?' on':'')+'" onclick="toggle(\'speak\')">'+(S.py.speak?'开':'关')+'</button></div>';
+  h+='</div>';
+
+  h+='<div class="card"><h3>💾 数据</h3>';
+  h+='<button class="btn g" onclick="exportData()">导出记录（备份）</button>';
+  h+='<button class="btn g" style="margin-top:10px" onclick="document.getElementById(\'imp\').click()">导入记录</button>';
+  h+='<input type="file" id="imp" accept="application/json" style="display:none" onchange="importData(this)">';
+  h+='<button class="btn g" style="margin-top:10px;color:var(--bad)" onclick="clearData()">清空全部记录</button>';
+  h+='<div class="muted" style="margin-top:10px">数据保存在这台设备的浏览器里，换手机请先导出再导入。</div></div>';
+  h+='<div class="muted" style="text-align:center;padding:8px 0 20px">每天题目都不一样 · 错题会自动反复出现</div>';
+  return h;
+}
+function setName(v){S.child=v.slice(0,8)||'宝贝';save();render()}
+function setLevel(k){S.math.level=k;save();render()}
+function toggleType(k){
+  var i=S.math.types.indexOf(k);
+  if(i>=0){if(S.math.types.length<=1){toast('至少留一个题型');return}S.math.types.splice(i,1)}
+  else S.math.types.push(k);
+  save();render();
+}
+function toggle(k){S.py[k]=!S.py[k];save();render()}
+function exportData(){
+  var blob=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='练习记录-'+todayKey()+'.json';a.click();
+  toast('已导出');
+}
+function importData(el){
+  var f=el.files[0];if(!f)return;
+  var rd=new FileReader();
+  rd.onload=function(){
+    try{var o=JSON.parse(rd.result);if(!o.records)throw 0;S=mergeObj(o);save();toast('导入成功');render()}
+    catch(e){toast('文件格式不对')}
+  };
+  rd.readAsText(f);el.value='';
+}
+function mergeObj(o){
+  var d=JSON.parse(JSON.stringify(DEF));
+  d.child=o.child||d.child;
+  if(o.math){d.math=o.math}
+  if(o.py){d.py=o.py}
+  d.records=o.records||{};d.weak=o.weak||{};d.off=o.off||{};
+  return d;
+}
+function clearData(){
+  openSheet('<h3 style="margin:0">确认清空？</h3><div class="muted" style="margin-top:6px">所有练习记录和错题都会被删除，无法恢复</div>','',
+    [{t:'确认清空',c:'no',f:function(){S=JSON.parse(JSON.stringify(DEF));save();closeSheet();go('home');toast('已清空')}},{t:'取消',c:'g',f:closeSheet}]);
+}
+
+/* ================= 通用组件 ================= */
+var STEPV={};
+function stepperHTML(id,v,min,max,step,onch){
+  STEPV[id]=v;
+  return '<div class="stepper"><button onclick="st(\''+id+'\','+(-step)+','+min+','+max+',\''+(onch?'1':'')+'\')">−</button><span id="sv_'+id+'">'+v+'</span><button onclick="st(\''+id+'\','+step+','+min+','+max+',\''+(onch?'1':'')+'\')">＋</button></div>';
+}
+function st(id,d,min,max,live){
+  var v=(STEPV[id]||0)+d;
+  if(v<min)return;if(v>max)return;
+  STEPV[id]=v;
+  var el=document.getElementById('sv_'+id);if(el)el.textContent=v;
+  if(live){
+    if(id==='mc'){S.math.count=v;save()}
+    if(id.indexOf('pc_')===0){S.py.counts[id.slice(3)]=v;save()}
+  }
+}
+var SHEET=null;
+function openSheet(title,body,btns){
+  closeSheet();
+  var d=document.createElement('div');d.className='sheet';d.id='sheet';
+  var h='<div class="box">'+title+body+'<div style="margin-top:14px">';
+  btns.forEach(function(b,i){h+='<button class="btn '+b.c+'" style="margin-top:8px" data-i="'+i+'">'+b.t+'</button>'});
+  h+='</div></div>';
+  d.innerHTML=h;
+  d.addEventListener('click',function(e){if(e.target===d)closeSheet()});
+  document.body.appendChild(d);
+  d.querySelectorAll('.btn').forEach(function(b){b.onclick=function(){btns[+b.dataset.i].f()}});
+  SHEET=d;
+}
+function closeSheet(){if(SHEET&&SHEET.parentNode)SHEET.parentNode.removeChild(SHEET);SHEET=null}
+
+/* ================= 启动 ================= */
+document.querySelectorAll('#tabs button').forEach(function(b){
+  b.onclick=function(){go(b.dataset.t)};
+});
+render();
+
+</script>
+</body>
+</html>
