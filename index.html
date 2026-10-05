@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="每日练习">
+<meta name="theme-color" content="#2FA98C">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <title>宝贝每日练习</title>
 <style>
 :root{
@@ -38,6 +46,8 @@ button{font-family:inherit;font-size:inherit;color:inherit;border:0;background:n
 .card{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(180,150,110,.10)}
 .card h3{margin:0 0 10px;font-size:15px;font-weight:800;display:flex;align-items:center;gap:6px}
 .muted{color:var(--ink2);font-size:13px}
+.tipbar{display:flex;align-items:center;gap:8px;background:var(--py-l);color:#1F7A63;font-size:13px;font-weight:700;padding:10px 12px;border-radius:14px;margin-bottom:12px;cursor:pointer}
+.tipbar .x{margin-left:auto;font-size:19px;font-weight:800;padding:0 2px 0 8px;line-height:1}
 .row{display:flex;align-items:center;gap:10px}
 .between{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .grow{flex:1;min-width:0}
@@ -515,10 +525,44 @@ function render(){
 }
 
 /* ================= 今日 ================= */
+function isStandalone(){
+  try{
+    if(window.navigator&&window.navigator.standalone===true)return true;
+    if(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)return true;
+  }catch(e){}
+  return false;
+}
+function isIOS(){
+  var ua=navigator.userAgent||'';
+  return /iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+}
+function installHint(){
+  if(isStandalone())return '';
+  try{if(localStorage.getItem('kidp_hide_install')==='1')return ''}catch(e){}
+  return '<div class="tipbar" onclick="showInstall()">📲 添加到主屏幕，打开就没有地址栏了 <span class="x" onclick="event.stopPropagation();hideInstall()">×</span></div>';
+}
+function hideInstall(){try{localStorage.setItem('kidp_hide_install','1')}catch(e){}render()}
+function showInstall(){
+  var ios=isIOS(),b='<div class="card" style="box-shadow:none;padding:10px 0">';
+  b+='<div style="line-height:2;font-size:14px">';
+  if(ios){
+    b+='① 点底部中间的<b>分享</b>按钮 <span style="font-size:17px">⬆️</span><br>';
+    b+='② 向下找到<b>「添加到主屏幕」</b><br>';
+    b+='③ 右上角点<b>「添加」</b><br>';
+  }else{
+    b+='① 点浏览器右上角<b>菜单</b> <span style="font-size:17px">⋮</span><br>';
+    b+='② 选<b>「添加到主屏幕」</b>或<b>「安装应用」</b><br>';
+    b+='③ 确认<br>';
+  }
+  b+='④ 桌面上出现图标，<b>以后从图标打开就是全屏，没有地址栏</b></div>';
+  b+='<div class="muted" style="margin-top:10px">练习记录按网址保存在本机，从图标打开和从浏览器打开是同一份数据，不会丢。</div></div>';
+  openSheet('<h3 style="margin:0 0 4px">📲 添加到主屏幕</h3><div class="muted">像 App 一样全屏使用</div>',b,[{t:'知道了',c:'p',f:closeSheet}]);
+}
 function viewHome(){
   var d=todayKey(),R=todayRec(),m=R.math,p=R.py;
   var mPct=pct(m.c,m.t),pPct=pct(p.c,p.t);
-  var h='<div class="hd"><div class="avatar">'+esc(S.child.slice(0,1))+'</div><div class="grow"><div class="tt">'+esc(S.child)+'，今天也要加油鸭</div><div class="dt">'+cnDate(d)+' · '+['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][new Date().getDay()]+'</div></div></div>';
+  var h=installHint();
+  h+='<div class="hd"><div class="avatar">'+esc(S.child.slice(0,1))+'</div><div class="grow"><div class="tt">'+esc(S.child)+'，今天也要加油鸭</div><div class="dt">'+cnDate(d)+' · '+['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][new Date().getDay()]+'</div></div></div>';
 
   h+='<div class="card"><div class="between"><h3 style="margin:0">📅 今日进度</h3><span class="muted">连续打卡 '+streak()+' 天</span></div>';
   h+='<div class="grid4" style="margin-top:10px">';
