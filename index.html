@@ -97,6 +97,8 @@ button{font-family:inherit;font-size:inherit;color:inherit;border:0;background:n
 .tone-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
 .tone-row div{font-size:34px;font-weight:800;color:var(--py)}
 .tone-row div small{display:block;font-size:14px;color:var(--ink2);font-weight:600;letter-spacing:0}
+.tone-wd-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:8px}
+.tone-wd-row div{font-size:14px;font-weight:800;color:var(--ink);letter-spacing:0;min-width:70px;text-align:center}
 
 /* 按钮 */
 .btn{display:block;width:100%;padding:15px;border-radius:16px;font-size:17px;font-weight:800;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.06)}
@@ -708,7 +710,7 @@ function viewPy(){
     h+='<div class="muted" style="margin-top:14px">两个音都要读准哦</div>';
   }else if(it.kind==='tone'){
     h+='<div class="tone-row">'+it.items.map(function(x){return '<div>'+esc(x.py)+'<small>'+(S.py.showHz&&x.hz!=='?'?esc(x.hz):'')+'</small></div>'}).join('')+'</div>';
-    h+='<div class="wd">'+it.items.map(function(x){return esc(x.w)}).join(' · ')+'</div>';
+    h+='<div class="tone-wd-row">'+it.items.map(function(x){return '<div>'+esc(x.w)+'</div>'}).join('')+'</div>';
     h+='<div class="muted" style="margin-top:14px">四个声调，一个一个读</div>';
   }else{
     h+='<div class="py"><span class="a">'+esc(it.a.py)+'</span></div>';
