@@ -236,6 +236,26 @@ var CONTRAST = {
     "bù|布|花布:dù|肚|肚子","bǐ|笔|铅笔:dǐ|底|底下","bàn|半|一半:dàn|蛋|鸡蛋",
     "bìng|病|生病:dìng|定|一定","pí|皮|皮球:qí|骑|骑车","píng|瓶|瓶子:qíng|晴|晴天",
     "pǔ|普|普通:qǔ|曲|歌曲","pén|盆|花盆:qín|琴|钢琴","pàng|胖|胖胖:qiáng|墙|墙壁"
+  ],
+  /* 复韵母：ai/ei · ai/ao · ao/ou · iu/ui · ie/üe · er */
+  fy: [
+    /* ai — ei */
+    "bái|白|白色:bēi|杯|杯子","mǎi|买|买菜:měi|美|美丽","lái|来|来了:léi|雷|打雷",
+    "gāi|该|应该:gěi|给|给你","hái|还|还有:hēi|黑|黑色","nài|耐|耐心:nèi|内|内外",
+    /* ai — ao */
+    "mài|卖|买卖:mào|帽|帽子","kāi|开|开门:kǎo|考|考试","cài|菜|青菜:cǎo|草|小草",
+    /* ao — ou */
+    "dào|到|到了:dòu|豆|豆子","gāo|高|高兴:gōu|勾|勾线","táo|桃|桃子:tóu|头|头发",
+    "zǎo|早|早上:zǒu|走|走路","láo|劳|劳动:lóu|楼|楼房","yào|要|不要:yǒu|有|没有",
+    "hǎo|好|你好:hòu|后|后面","shǎo|少|多少:shǒu|手|小手",
+    /* iu — ui */
+    "liú|流|流水:shuǐ|水|喝水","jiǔ|九|九个:zuǐ|嘴|嘴巴","qiū|秋|秋天:tuī|推|推车",
+    "niú|牛|小牛:duì|队|排队","diū|丢|丢了:duī|堆|土堆",
+    /* ie — üe */
+    "xiě|写|写字:xuě|雪|下雪","jiě|姐|姐姐:jué|觉|觉得","qié|茄|茄子:què|雀|麻雀",
+    "dié|蝶|蝴蝶:xué|学|学习","yè|叶|树叶:yuè|月|月亮",
+    /* er 特殊韵母 */
+    "ér|儿|儿子:ěr|耳|耳朵"
   ]
 };
 /* 四声一组 */
@@ -305,6 +325,7 @@ var PY_TYPES = [
   {k:'bb',   n:'前鼻·后鼻', d:'an/ang en/eng in/ing', df:3},
   {k:'nl',   n:'n 和 l',    d:'男/蓝  牛/流', df:1},
   {k:'bd',   n:'b·d 和 p·q',d:'爸/大  爬/骑', df:0},
+  {k:'fy',   n:'复韵母',     d:'白/杯  到/豆  写/雪', df:2},
   {k:'tone', n:'四声调',    d:'bā bá bǎ bà', df:1},
   {k:'whole',n:'整体认读',  d:'zhi chi shi ri…', df:1},
   {k:'word', n:'词语朗读',  d:'看拼音读词语', df:1}
@@ -330,7 +351,7 @@ function toast(m){var e=$('#toast');e.textContent=m;e.classList.add('on');clearT
 var KEY='kidp_v1';
 var DEF={child:'宝贝',
   math:{count:10,level:'std',types:['add','sub','fill']},
-  py:{counts:{zs:3,bb:3,nl:1,bd:0,tone:1,whole:1,word:1},showHz:true,speak:true},
+  py:{counts:{zs:3,bb:3,nl:1,bd:0,fy:2,tone:1,whole:1,word:1},showHz:true,speak:true},
   records:{},weak:{},off:{}};
 function load(){
   try{var s=localStorage.getItem(KEY);var o=s?JSON.parse(s):{}}catch(e){o={}}
