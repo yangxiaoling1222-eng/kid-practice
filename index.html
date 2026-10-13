@@ -102,7 +102,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;border:0;background:n
 .py .b{color:#7C6EF0}
 .py .sep{color:#DDD;font-weight:400;margin:0 8px;font-size:26px}
 .hz{font-size:30px;font-weight:700;color:var(--ink);margin-top:6px;letter-spacing:8px}
-.wd{font-size:14px;color:var(--ink2);margin-top:8px;letter-spacing:1px}
+.wd{font-size:18px;font-weight:800;color:var(--ink);margin-top:10px;letter-spacing:1px}
 .tag{display:inline-block;font-size:11px;padding:3px 9px;border-radius:20px;background:var(--py-l);color:var(--py);font-weight:700;margin-bottom:12px}
 .pair-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;width:100%;max-width:420px}
 .pair-col>div{display:flex;flex-direction:column;align-items:center}
@@ -261,6 +261,29 @@ var CONTRAST = {
     "dié|蝶|蝴蝶:xué|学|学习","yè|叶|树叶:yuè|月|月亮",
     /* er 特殊韵母 */
     "ér|儿|儿子:ěr|耳|耳朵"
+  ],
+  /* 前鼻韵母专项：an / en / in / un / ün 互相混淆 */
+  qb: [
+    /* an — en */
+    "bān|班|班级:bēn|奔|奔跑","pán|盘|盘子:pén|盆|花盆","mǎn|满|满分:mén|门|大门",
+    "fǎn|反|反对:fěn|粉|粉色","sān|三|三个:sēn|森|森林","zhàn|站|站好:zhēn|真|真的",
+    "shān|山|大山:shēn|深|深浅","gān|干|干净:gēn|跟|跟着","fān|帆|帆船:fēn|分|分开",
+    /* en — in */
+    "mén|门|大门:mín|民|人民","pén|盆|花盆:pǐn|品|物品","shēn|深|深浅:xīn|心|开心",
+    "běn|本|本子:bīn|滨|海滨","zhēn|真|真的:jīn|金|金子",
+    /* an — in */
+    "shān|山|大山:xīn|心|开心","mǎn|满|满分:jǐn|紧|紧紧","lán|蓝|蓝色:lín|林|树林",
+    /* in — ün */
+    "jīn|金|金子:jūn|军|军人","qín|琴|钢琴:qún|群|一群","xīn|心|开心:xún|寻|寻找",
+    "yīn|音|声音:yún|云|白云",
+    /* in — un */
+    "lín|林|树林:lún|轮|轮子","jìn|进|进来:dùn|顿|一顿","pǐn|品|物品:cūn|村|村子",
+    /* ün — un */
+    "jūn|军|军人:zhǔn|准|准备","xún|寻|寻找:sūn|孙|孙子","yún|云|白云:wén|文|语文",
+    "qún|群|一群:gǔn|滚|滚动",
+    /* an — un */
+    "sān|三|三个:sūn|孙|孙子","wān|弯|弯弯:wēn|温|温暖","zhàn|站|站好:zhǔn|准|准备",
+    "bān|班|班级:dūn|蹲|蹲下"
   ]
 };
 /* 四声一组 */
@@ -312,6 +335,41 @@ var WORDS = [
   "guān|关|关门","lái|来|来了","qù|去|出去","zhuō|捉|捉虫","pāi|拍|拍手","bào|抱|抱抱",
   "xǐng|醒|醒来","jìng|静|安静","kuài|快|快乐","màn|慢|慢慢","yuǎn|远|远方","jìn|近|近处"
 ];
+/* 三拼音节：声母 + 介母(i/u/ü) + 韵母，如 huā = h-u-ā */
+var SANPIN = [
+  /* 介母 u：g k h */
+  "guā|瓜|西瓜","guǒ|果|水果","guān|关|关门","guāng|光|阳光","guì|贵|宝贵","guó|国|国家","guǎn|管|水管",
+  "kuài|快|快乐","kuān|宽|宽宽",
+  "huā|花|花朵","huà|画|画画","huǒ|火|火车","huáng|黄|黄色","huí|回|回来","huān|欢|欢乐",
+  /* 介母 i：j q x */
+  "jiā|家|回家","jiào|叫|叫声","jiǎn|剪|剪刀","jiàn|见|看见","jiǎng|讲|讲话","jiāng|江|江水","jiǎo|脚|小脚",
+  "qiáo|桥|小桥","qiáng|墙|墙壁","qián|前|前面","qiú|球|皮球",
+  "xiǎo|小|小小","xiào|笑|微笑","xióng|熊|熊猫","xiǎng|想|想念","xiān|先|先来","xiàn|线|画线",
+  "xiāng|香|香甜","xiàng|象|大象","xià|下|下课",
+  /* 介母 u：zh ch sh */
+  "zhuō|桌|桌子","zhuō|捉|捉虫","zhuǎn|转|转弯","zhuāng|装|装水",
+  "chuān|穿|穿衣","chuán|船|小船","chuáng|床|小床","chuāng|窗|窗户","chuī|吹|吹风",
+  "shuō|说|说话","shuì|睡|睡觉","shuā|刷|刷牙","shuāng|双|双手","shuǐ|水|喝水",
+  /* 介母 u：z c s */
+  "zuò|坐|坐下","zuǒ|左|左边","zuì|最|最好","zuān|钻|钻进",
+  "cuò|错|错了",
+  "suān|酸|酸甜","suàn|算|算数",
+  /* 介母 u：d t n l */
+  "duō|多|很多","duǒ|朵|花朵","duǎn|短|短短","duì|队|排队",
+  "tuán|团|团圆","tuī|推|推车","tuō|脱|脱掉",
+  "nuǎn|暖|暖和","nuó|挪|挪开",
+  "luó|萝|萝卜","luò|落|落下",
+  /* 介母 i：n l m b p */
+  "nián|年|新年","niǎo|鸟|小鸟","niàn|念|想念",
+  "lián|连|连线","liǎng|两|两个","liàng|亮|明亮",
+  "miáo|苗|树苗","miàn|面|面条",
+  "biǎo|表|手表","biàn|变|变成",
+  "piào|票|车票","piàn|片|一片","piāo|飘|飘动",
+  /* 介母 ü：j q x */
+  "juǎn|卷|卷起","jué|觉|觉得",
+  "quán|全|全部","quān|圈|圆圈","què|雀|麻雀",
+  "xuǎn|选|选择","xuě|雪|下雪","xué|学|学习"
+];
 
 /* ============ 数学题型 ============ */
 var MATH_TYPES = [
@@ -328,9 +386,11 @@ var MATH_TYPES = [
 var PY_TYPES = [
   {k:'zs',   n:'平舌·翘舌', d:'z/zh  c/ch  s/sh', df:3},
   {k:'bb',   n:'前鼻·后鼻', d:'an/ang en/eng in/ing', df:3},
+  {k:'qb',   n:'前鼻韵母',  d:'班/奔  心/军  林/轮', df:2},
   {k:'nl',   n:'n 和 l',    d:'男/蓝  牛/流', df:1},
   {k:'bd',   n:'b·d 和 p·q',d:'爸/大  爬/骑', df:0},
   {k:'fy',   n:'复韵母',     d:'白/杯  到/豆  写/雪', df:2},
+  {k:'sp',   n:'三拼音节',  d:'huā  kuài  jiā', df:2},
   {k:'tone', n:'四声调',    d:'bā bá bǎ bà', df:1},
   {k:'whole',n:'整体认读',  d:'zhi chi shi ri…', df:1},
   {k:'word', n:'词语朗读',  d:'看拼音读词语', df:1}
@@ -356,7 +416,7 @@ function toast(m){var e=$('#toast');e.textContent=m;e.classList.add('on');clearT
 var KEY='kidp_v1';
 var DEF={child:'宝贝',
   math:{count:10,level:'std',types:['add','sub','fill']},
-  py:{counts:{zs:3,bb:3,nl:1,bd:0,fy:2,tone:1,whole:1,word:1},showHz:true,speak:true},
+  py:{counts:{zs:3,bb:3,qb:2,nl:1,bd:0,fy:2,sp:2,tone:1,whole:1,word:1},showHz:true,speak:true},
   records:{},weak:{},off:{}};
 function load(){
   try{var s=localStorage.getItem(KEY);var o=s?JSON.parse(s):{}}catch(e){o={}}
@@ -454,6 +514,7 @@ function pyPool(k){
   if(k==='tone')return TONES.map(function(s){return {kind:'tone',tag:'tone',items:s.split(',').map(parseItem),key:s}});
   if(k==='whole')return WHOLE.map(function(s){var o=parseItem(s);return {kind:'word',tag:'whole',a:o,key:s}});
   if(k==='word')return WORDS.map(function(s){var o=parseItem(s);return {kind:'word',tag:'word',a:o,key:s}});
+  if(k==='sp')return SANPIN.map(function(s){var o=parseItem(s);return {kind:'word',tag:'sp',a:o,key:s}});
   var src=(CONTRAST[k]||[]).filter(function(s){return s.indexOf('|?')<0});
   return src.map(function(s){var p=s.split(':');return {kind:'pair',tag:k,a:parseItem(p[0]),b:parseItem(p[1]),key:s}});
 }
