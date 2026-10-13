@@ -40,6 +40,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;border:0;background:n
 .hd{padding:16px 0 8px;display:flex;align-items:center;gap:10px}
 .hd .tt{font-size:20px;font-weight:800;letter-spacing:.5px}
 .hd .dt{font-size:12px;color:var(--ink2);margin-top:2px}
+.hdset{flex:none;font-size:13px;font-weight:700;color:var(--ink2);background:#F6EFE6;padding:7px 13px;border-radius:20px;cursor:pointer}
 .avatar{width:40px;height:40px;border-radius:14px;background:linear-gradient(135deg,#FFD08A,#FF9A76);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex:none}
 
 /* card */
@@ -186,7 +187,6 @@ button{font-family:inherit;font-size:inherit;color:inherit;border:0;background:n
 <div class="tabs" id="tabs">
   <button data-t="home" class="on"><i>🏠</i>今日</button>
   <button data-t="stat"><i>📊</i>统计</button>
-  <button data-t="set"><i>⚙️</i>设置</button>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -589,8 +589,9 @@ function finish(){
 var TAB='home';
 function syncTabs(){
   var t=TAB,practice=(t==='math'||t==='py'||t==='mdone'||t==='pdone');
+  var active=practice?'home':(t==='set'?'stat':t);
   document.querySelectorAll('#tabs button').forEach(function(b){
-    b.classList.toggle('on',b.dataset.t===t||(practice&&b.dataset.t==='home'));
+    b.classList.toggle('on',b.dataset.t===active);
   });
 }
 function go(t){
@@ -664,7 +665,7 @@ function viewHome(){
 
   var pyn=0;PY_TYPES.forEach(function(t){pyn+=S.py.counts[t.k]||0});
   h+='<div class="entry p" onclick="startPy()"><div class="nm">🗣️ 拼音朗读</div><div class="bar"><i style="width:'+Math.min(100,pPct)+'%"></i></div><div class="pg">'+(p.t?p.c+'/'+p.t:'开练')+'</div></div>';
-  h+='<div class="row" style="margin:-4px 0 12px"><div class="chip" onclick="quickCount(\'py\')">改题量</div><div class="chip" onclick="newSet(\'py\')">换一组</div><div class="chip" onclick="go(\'set\')">题型设置</div></div>';
+  h+='<div class="row" style="margin:-4px 0 12px"><div class="chip" onclick="quickCount(\'py\')">改题量</div><div class="chip" onclick="newSet(\'py\')">换一组</div><div class="chip" onclick="go(\'stat\')">看统计</div></div>';
 
   /* 薄弱提醒 */
   var wk=topWeak(6);
@@ -955,7 +956,7 @@ function viewStat(){
   });
   var R=todayRec(),tot=0,tc=0,pt=0,pc=0,dsum=0;
   for(var k in S.records){var r=S.records[k];tot+=r.math.t;tc+=r.math.c;pt+=r.py.t;pc+=r.py.c;dsum++}
-  var h='<div class="hd"><div class="grow"><div class="tt">📊 练习统计</div><div class="dt">累计 '+dsum+' 天 · 数学 '+tot+' 题 · 拼音 '+pt+' 张</div></div></div>';
+  var h='<div class="hd"><div class="grow"><div class="tt">📊 练习统计</div><div class="dt">累计 '+dsum+' 天 · 数学 '+tot+' 题 · 拼音 '+pt+' 张</div></div><button class="hdset" onclick="go(\'set\')">⚙️ 设置</button></div>';
   h+='<div class="grid4">';
   h+='<div class="stat"><b style="color:var(--math)">'+pct(tc,tot)+'%</b><span>数学总正确率</span></div>';
   h+='<div class="stat"><b style="color:var(--py)">'+pct(pc,pt)+'%</b><span>拼音总掌握率</span></div>';
