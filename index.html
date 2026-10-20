@@ -18,6 +18,7 @@
   --bg:#FFF7EF; --card:#fff; --ink:#3A3129; --ink2:#8A7C6B; --line:#F0E4D6;
   --math:#4C86E8; --math-l:#EAF2FE;
   --py:#2FA98C; --py-l:#E6F7F2;
+  --hz:#EF7F2A; --hz-l:#FFF1E2;
   --warn:#F5A63C; --warn-l:#FFF2DF;
   --bad:#E8574A; --bad-l:#FDECEA;
   --good:#2FA98C;
@@ -57,6 +58,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;border:0;background:n
 .entry{display:block;width:100%;text-align:left;border-radius:var(--r);padding:16px;margin-bottom:12px;color:#fff;position:relative;overflow:hidden;cursor:pointer}
 .entry.m{background:linear-gradient(135deg,#5C93F0,#3D74D6)}
 .entry.p{background:linear-gradient(135deg,#43BC9C,#1F9680)}
+.entry.h{background:linear-gradient(135deg,#FFB35C,#EC7620)}
 .entry .nm{font-size:18px;font-weight:800}
 .entry .ds{font-size:12px;opacity:.9;margin-top:3px}
 .entry .pg{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:700;opacity:.95}
@@ -116,6 +118,17 @@ button{font-family:inherit;font-size:inherit;color:inherit;border:0;background:n
 .tone-wd-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;align-items:start}
 .tone-wd-row div{font-size:13px;font-weight:800;color:var(--ink);letter-spacing:0;text-align:center;line-height:1.35;padding:0 1px}
 
+/* 汉字认读卡 */
+.hcard{background:var(--card);border-radius:22px;padding:18px 16px 24px;text-align:center;box-shadow:0 4px 18px rgba(180,150,110,.14);min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.hzpy{font-size:clamp(30px,9vw,42px);font-weight:800;color:var(--math);letter-spacing:2px;line-height:1.3;min-height:52px;display:flex;align-items:center;justify-content:center}
+.hzpy.off{font-size:14px;font-weight:700;color:var(--ink2);letter-spacing:0}
+.hzbig{font-size:clamp(90px,27vw,132px);font-weight:800;line-height:1.05;color:var(--ink);margin:2px 0}
+.hzw{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:2px;margin-top:10px}
+.hzw i{font-style:normal;font-size:12px;font-weight:600;color:var(--ink2);letter-spacing:0;margin-right:4px}
+.hzfb{margin-top:14px;font-size:14px;font-weight:800;min-height:22px}
+.hzfb.ok{color:var(--good)}
+.hzfb.no{color:var(--bad)}
+
 /* 按钮 */
 .btn{display:block;width:100%;padding:15px;border-radius:16px;font-size:17px;font-weight:800;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.06)}
 .btn.p{background:var(--math);color:#fff}
@@ -131,6 +144,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;border:0;background:n
 .ptop .bar{flex:1;height:8px;background:#F0E4D6;border-radius:4px;overflow:hidden}
 .ptop .bar i{display:block;height:100%;background:var(--math);border-radius:4px;transition:width .3s}
 .ptop .bar.p i{background:var(--py)}
+.ptop .bar.h i{background:var(--hz)}
 .ptop .cnt{font-size:13px;font-weight:700;color:var(--ink2)}
 
 /* 设置 */
@@ -372,6 +386,98 @@ var SANPIN = [
 ];
 
 /* ============ 数学题型 ============ */
+/* ============ 汉字认读题库（527 个常用字：拼音|汉字|词语） ============ */
+var HANZI = [
+  "yī|一|一个","èr|二|二月","sān|三|三只","sì|四|四天","wǔ|五|五天","liù|六|六月",
+  "qī|七|七天","bā|八|八月","jiǔ|九|九月","shí|十|十个","bǎi|百|一百","qiān|千|一千",
+  "wàn|万|万一","bàn|半|半天","liǎng|两|两只","gè|个|个子","zhī|只|一只","tiáo|条|一条",
+  "piàn|片|一片","duǒ|朵|一朵","bǎ|把|一把","běn|本|书本","zhāng|张|一张","shuāng|双|双手",
+  "duì|对|一对","qún|群|一群","kē|颗|一颗","kuài|块|一块","cì|次|一次","pái|排|排队",
+  "duī|堆|一堆","chuàn|串|一串","shàng|上|上山","xià|下|下雨","zhōng|中|中间","zuǒ|左|左手",
+  "yòu|右|右手","qián|前|前面","hòu|后|后面","lǐ|里|里面","wài|外|外面","dōng|东|东方",
+  "nán|南|南方","xī|西|西方","běi|北|北方","páng|旁|旁边","biān|边|河边","jiān|间|中间",
+  "nèi|内|内外","tiān|天|天空","dì|地|地上","rì|日|日出","yuè|月|月亮","xīng|星|星星",
+  "yún|云|白云","fēng|风|风车","yǔ|雨|雨点","xuě|雪|雪花","diàn|电|电视","huǒ|火|火车",
+  "shuǐ|水|水果","shān|山|大山","shí|石|石头","tǔ|土|土地","tián|田|田地","jiāng|江|江水",
+  "hé|河|河水","hǎi|海|大海","hú|湖|湖水","chí|池|水池","huā|花|花朵","cǎo|草|小草",
+  "shù|树|大树","mù|木|木头","lín|林|树林","zhú|竹|竹子","yè|叶|叶子","guǒ|果|果园",
+  "miáo|苗|树苗","gēn|根|根部","zhī|枝|树枝","chūn|春|春天","xià|夏|夏天","qiū|秋|秋天",
+  "dōng|冬|冬天","guāng|光|光明","qì|气|天气","bīng|冰|冰块","shā|沙|沙子","yǐng|影|影子",
+  "yáng|阳|太阳","kōng|空|空气","rén|人|大人","shēn|身|身体","tǐ|体|体育","tóu|头|头发",
+  "shǒu|手|手心","zú|足|足球","yá|牙|牙齿","ěr|耳|耳朵","mù|目|目光","yǎn|眼|眼睛",
+  "bí|鼻|鼻子","liǎn|脸|笑脸","fā|发|发现","xīn|心|小心","bèi|背|背书","dù|肚|肚子",
+  "zhǐ|指|手指","jiǎo|脚|脚步","tuǐ|腿|大腿","xuè|血|血液","lèi|泪|眼泪","máo|毛|毛巾",
+  "pí|皮|皮球","ròu|肉|肉片","gǔ|骨|骨头","bà|爸|爸爸","mā|妈|妈妈","yé|爷|爷爷",
+  "nǎi|奶|奶奶","gē|哥|哥哥","jiě|姐|姐姐","dì|弟|弟弟","mèi|妹|妹妹","shū|叔|叔叔",
+  "gū|姑|姑姑","jiā|家|家人","wǒ|我|我们","nǐ|你|你们","tā|他|他们","tā|她|她们",
+  "tā|它|它们","ér|儿|儿子","nǚ|女|女儿","zǐ|子|子孙","bǎo|宝|宝宝","hái|孩|孩子",
+  "péng|朋|朋友","yǒu|友|友好","wáng|王|王子","zhǔ|主|主人","niú|牛|牛奶","yáng|羊|山羊",
+  "mǎ|马|马路","zhū|猪|小猪","māo|猫|小猫","gǒu|狗|小狗","jī|鸡|鸡蛋","yā|鸭|鸭子",
+  "é|鹅|鹅毛","tù|兔|兔子","niǎo|鸟|小鸟","yú|鱼|金鱼","chóng|虫|虫子","fēng|蜂|蜜蜂",
+  "dié|蝶|蝴蝶","hǔ|虎|老虎","xiàng|象|大象","hóu|猴|猴子","xióng|熊|熊猫","láng|狼|狼狗",
+  "lù|鹿|鹿角","shé|蛇|蛇皮","shǔ|鼠|老鼠","lóng|龙|龙舟","xiā|虾|虾米","guī|龟|乌龟",
+  "cán|蚕|蚕豆","yǐ|蚁|蚂蚁","yǔ|羽|羽毛","wěi|尾|尾巴","chì|翅|翅膀","wō|窝|鸟窝",
+  "hóng|红|红色","huáng|黄|黄色","lán|蓝|蓝天","lǜ|绿|绿色","bái|白|白色","hēi|黑|黑色",
+  "zǐ|紫|紫色","huī|灰|灰色","fěn|粉|粉色","cǎi|彩|彩色","mǐ|米|米饭","miàn|面|面包",
+  "fàn|饭|饭菜","cài|菜|青菜","tāng|汤|汤勺","táng|糖|糖果","yán|盐|盐水","yóu|油|油菜",
+  "chá|茶|茶水","bǐng|饼|饼干","bāo|包|包子","zhōu|粥|稀粥","dòu|豆|豆子","guā|瓜|瓜子",
+  "táo|桃|桃子","lí|梨|梨树","píng|苹|苹果","zǎo|枣|枣树","xiāng|香|香味","tián|甜|甜点",
+  "suān|酸|酸奶","là|辣|辣椒","kǔ|苦|苦瓜","dàn|蛋|蛋糕","wèi|味|味道","bǎo|饱|饱满",
+  "yī|衣|衣服","kù|裤|裤子","xié|鞋|鞋子","wà|袜|袜子","mào|帽|帽子","jīn|巾|头巾",
+  "bù|布|布条","chuáng|床|床单","bèi|被|被子","zhuō|桌|桌子","yǐ|椅|椅子","mén|门|大门",
+  "chuāng|窗|窗户","dēng|灯|台灯","sǎn|伞|花伞","dāo|刀|刀口","bēi|杯|水杯","wǎn|碗|饭碗",
+  "sháo|勺|勺子","pán|盘|盘子","guō|锅|锅子","jiǎn|剪|剪刀","chǐ|尺|尺子","bǐ|笔|铅笔",
+  "zhǐ|纸|白纸","shū|书|看书","zhōng|钟|时钟","biǎo|表|手表","qiú|球|皮球","wán|玩|玩具",
+  "líng|铃|铃铛","zǒu|走|走路","pǎo|跑|跑步","tiào|跳|跳高","zhàn|站|车站","zuò|坐|坐下",
+  "lì|立|立正","shuì|睡|睡觉","xǐng|醒|醒来","qǐ|起|起来","lái|来|来了","qù|去|回去",
+  "huí|回|回家","guò|过|过来","jìn|进|进来","chū|出|出去","kāi|开|开门","guān|关|关门",
+  "dǎ|打|打球","pāi|拍|拍手","bào|抱|抱抱","lā|拉|拉手","tuī|推|推车","tí|提|提水",
+  "ná|拿|拿走","fàng|放|放下","sòng|送|送人","zhǎo|找|找人","kàn|看|看书","tīng|听|听见",
+  "shuō|说|说话","dú|读|读书","xiě|写|写字","huà|画|画画","chàng|唱|唱歌","xiào|笑|笑声",
+  "kū|哭|哭声","jiào|叫|叫声","wèn|问|问题","dá|答|回答","mǎi|买|买菜","mài|卖|卖出",
+  "zuò|做|做事","xué|学|学习","jiào|教|教室","xǐ|洗|洗手","chuān|穿|穿衣","chī|吃|吃饭",
+  "hē|喝|喝水","yǎo|咬|咬牙","pá|爬|爬山","fēi|飞|飞机","yóu|游|游泳","sǎo|扫|扫地",
+  "cā|擦|擦洗","bāng|帮|帮忙","shōu|收|收拾","bān|搬|搬家","tái|抬|抬头","xiào|校|学校",
+  "lǎo|老|老师","shī|师|师生","kè|课|上课","zì|字|汉字","cí|词|词语","jù|句|句子",
+  "wén|文|语文","shù|数|数学","tí|题|题目","kǎo|考|考试","bān|班|班级","tóng|同|同学",
+  "míng|名|名字","nián|年|新年","suì|岁|岁月","jí|级|年级","zǎo|早|早上","wǎn|晚|晚上",
+  "wǔ|午|中午","jīn|今|今天","míng|明|明天","zuó|昨|昨天","shí|时|时间","fēn|分|分钟",
+  "miǎo|秒|秒针","zhōu|周|周末","fáng|房|房子","wū|屋|屋子","lóu|楼|楼房","yuàn|院|院子",
+  "qiáng|墙|墙壁","qiáo|桥|桥上","lù|路|公路","chē|车|汽车","chuán|船|小船","gōng|工|工人",
+  "nóng|农|农民","yī|医|医生","bīng|兵|士兵","jūn|军|军人","jǐng|警|警察","yào|药|药水",
+  "bìng|病|生病","téng|疼|疼痛","ān|安|安全","quán|全|全部","gōng|公|公园","yuán|园|园丁",
+  "chǎng|场|广场","shì|市|超市","diàn|店|商店","qián|钱|金钱","piào|票|车票","jié|节|节日",
+  "shēng|生|生日","lè|乐|快乐","xǐ|喜|喜欢","huān|欢|欢乐","ài|爱|爱心","shuí|谁|谁的",
+  "shén|什|什么","zěn|怎|怎么","yàng|样|样子","xiē|些|一些","diǎn|点|点心","jiàn|见|看见",
+  "jué|觉|觉得","dé|得|得到","dào|到|到了","wán|完|完成","chéng|成|成功","gōng|功|功课",
+  "yòng|用|用力","lì|力|力气","néng|能|能干","huì|会|开会","kě|可|可以","yǐ|以|以后",
+  "suǒ|所|所以","dàn|但|但是","yīn|因|因为","wèi|为|为了","rú|如|如果","bǐ|比|比赛",
+  "sài|赛|赛车","shēng|声|声音","yīn|音|音乐","gē|歌|歌曲","qǔ|曲|曲子","wǔ|舞|跳舞",
+  "huà|话|电话","nào|闹|闹钟","jìng|静|安静","dà|大|大小","xiǎo|小|小心","duō|多|多少",
+  "shǎo|少|少见","hǎo|好|好人","huài|坏|坏人","xīn|新|新书","jiù|旧|旧书","cháng|长|长短",
+  "duǎn|短|短处","gāo|高|高山","ǎi|矮|矮小","fāng|方|方向","yuán|圆|圆形","jiān|尖|尖刀",
+  "kuài|快|快点","màn|慢|慢慢","lěng|冷|冷水","rè|热|热水","gān|干|干净","shī|湿|湿地",
+  "zāng|脏|脏水","jìng|净|净水","liàng|亮|亮光","àn|暗|黑暗","qīng|轻|轻轻","zhòng|重|重量",
+  "pàng|胖|胖子","shòu|瘦|瘦小","měi|美|美丽","zhēn|真|真的","jiǎ|假|假话","cuò|错|错误",
+  "shì|是|是的","yǒu|有|有没有","wú|无|无声","měi|每|每天","hé|和|和好","hái|还|还有",
+  "zuì|最|最好","gèng|更|更好","zài|再|再见","bù|不|不要","méi|没|没有","bié|别|别人",
+  "qǐng|请|请坐","xiè|谢|谢谢","tài|太|太多","hěn|很|很好","yòu|又|又是","dōu|都|都有",
+  "jiù|就|就是","píng|平|平安","xīng|兴|兴奋","huó|活|活动","dòng|动|动作","wù|物|动物",
+  "zhòng|种|种花","zì|自|自己","yóu|由|自由","jǐ|几|几个","dì|第|第一","jiā|加|加法",
+  "jiǎn|减|减法","hé|合|合作","yuán|元|单元","jiǎo|角|三角","pà|怕|怕冷","máng|忙|忙碌",
+  "lèi|累|累人","kě|渴|渴望","chòu|臭|臭气","xiǎng|响|响声","yuǎn|远|远方","jìn|近|近处",
+  "shēn|深|深浅","qiǎn|浅|浅水","kuān|宽|宽大","zhǎi|窄|窄小","mǎn|满|满地","shí|实|实在",
+  "xì|细|细心","cū|粗|粗心","yìng|硬|硬币","ruǎn|软|软糖","sōng|松|松鼠","jǐn|紧|紧急",
+  "pò|破|破旧","zhěng|整|整齐","qí|齐|齐全","luàn|乱|乱跑","shùn|顺|顺利","dào|倒|倒车",
+  "fǎn|反|反正","zhèng|正|正确","wāi|歪|歪斜","zhí|直|直线","wān|弯|弯路","xié|斜|斜坡",
+  "qíng|晴|晴天","yīn|阴|阴天","léi|雷|雷声","lù|露|露水","shuāng|霜|霜花","wù|雾|大雾",
+  "gěi|给|给你","dài|带|带路","wàng|忘|忘记","jì|记|记住","xiǎng|想|想到","niàn|念|想念",
+  "jiǎng|讲|讲话","gù|故|故事","shì|事|事情","gào|告|告诉","jié|结|结果","jué|决|决定",
+  "dìng|定|一定","bì|必|必须","yīng|应|应该","zhǔn|准|准备","yǐ|已|已经","jiē|街|街道",
+  "chéng|城|城市","cūn|村|村子","xiāng|乡|乡下","shì|世|世界","guó|国|国家","qí|旗|旗子",
+  "nǎo|脑|脑子","hàn|汗|汗水","lìng|另|另外","xìn|信|写信","duì|队|队员"
+];
+
 var MATH_TYPES = [
   {k:'add',  n:'加法',     d:'3 + 4 = ?'},
   {k:'sub',  n:'减法',     d:'7 - 2 = ?'},
@@ -417,7 +523,8 @@ var KEY='kidp_v1';
 var DEF={child:'宝贝',
   math:{count:10,level:'std',types:['add','sub','fill']},
   py:{counts:{zs:3,bb:3,qb:2,nl:1,bd:0,fy:2,sp:2,tone:1,whole:1,word:1},showHz:true,speak:true},
-  records:{},weak:{},off:{}};
+  hz:{count:20,showWord:true},
+  records:{},weak:{},weakH:{},off:{}};
 function load(){
   try{var s=localStorage.getItem(KEY);var o=s?JSON.parse(s):{}}catch(e){o={}}
   var d=JSON.parse(JSON.stringify(DEF));
@@ -426,12 +533,29 @@ function load(){
   if(o.py){for(var k in d.py.counts){if(o.py.counts&&typeof o.py.counts[k]==='number')d.py.counts[k]=o.py.counts[k]}
     if(typeof o.py.showHz==='boolean')d.py.showHz=o.py.showHz;
     if(typeof o.py.speak==='boolean')d.py.speak=o.py.speak;}
-  d.records=o.records||{};d.weak=o.weak||{};d.off=o.off||{};
+  if(o.hz){
+    if(typeof o.hz.count==='number')d.hz.count=Math.max(1,Math.min(100,o.hz.count));
+    if(typeof o.hz.showWord==='boolean')d.hz.showWord=o.hz.showWord;
+  }
+  d.records=o.records||{};d.weak=o.weak||{};d.weakH=o.weakH||{};d.off=o.off||{};
+  for(var k in d.records){
+    var r=d.records[k]||{};
+    if(!r.math)r.math={t:0,c:0,ms:0,ty:{},w:[]};
+    if(!r.py)r.py={t:0,c:0,ty:{},w:[]};
+    if(!r.hz)r.hz={t:0,c:0,ty:{},w:[]};
+  }
   return d;
 }
 var S=load();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('保存失败：存储空间不足')}}
-function rec(d){if(!S.records[d])S.records[d]={math:{t:0,c:0,ms:0,ty:{},w:[]},py:{t:0,c:0,ty:{},w:[]}};return S.records[d]}
+function rec(d){
+  var r=S.records[d];
+  if(!r){r=S.records[d]={math:{t:0,c:0,ms:0,ty:{},w:[]},py:{t:0,c:0,ty:{},w:[]},hz:{t:0,c:0,ty:{},w:[]}}}
+  if(!r.math)r.math={t:0,c:0,ms:0,ty:{},w:[]};
+  if(!r.py)r.py={t:0,c:0,ty:{},w:[]};
+  if(!r.hz)r.hz={t:0,c:0,ty:{},w:[]};
+  return r;
+}
 function todayRec(){return rec(todayKey())}
 
 /* ================= 数学出题 ================= */
@@ -551,8 +675,9 @@ function genPy(seed){
 
 /* ================= 会话 ================= */
 var SS=null;
-function offGet(kind){var o=S.off[todayKey()]||{};return o[kind==='math'?'m':'p']||0}
-function offInc(kind){var d=todayKey();if(!S.off[d])S.off[d]={m:0,p:0};S.off[d][kind==='math'?'m':'p']++;save()}
+function offKey(kind){return kind==='math'?'m':(kind==='py'?'p':'h')}
+function offGet(kind){var o=S.off[todayKey()]||{};return o[offKey(kind)]||0}
+function offInc(kind){var d=todayKey();if(!S.off[d])S.off[d]={m:0,p:0,h:0};S.off[d][offKey(kind)]++;save()}
 function startMath(list){
   SS={kind:'math',list:list||genMath(hash(todayKey()+'|m|'+offGet('math'))),i:0,inp:[],ok:0,wrong:[],t0:Date.now(),lock:0};
   if(!list)SS.redo=0;
@@ -562,6 +687,35 @@ function startPy(){
   SS={kind:'py',list:genPy(hash(todayKey()+'|p|'+offGet('py'))),i:0,ok:0,wrong:[],t0:Date.now(),lock:0};
   TAB='py';render();syncTabs();window.scrollTo(0,0);
 }
+/* ============ 汉字认读出题 ============ */
+function genHz(seed){
+  var r=rng(seed),list=[],used={},n=Math.max(1,S.hz.count||20),guard=0;
+  var pool=HANZI.slice();
+  while(list.length<n&&guard<600){
+    guard++;
+    var cand=null;
+    if(r()<0.4){
+      var ws=pool.filter(function(s){var c=s.split('|')[1];return S.weakH[c]&&!used[c]});
+      if(ws.length){
+        ws.sort(function(a,b){return (S.weakH[b.split('|')[1]]||0)-(S.weakH[a.split('|')[1]]||0)});
+        cand=ws[ri(r,Math.min(4,ws.length))];
+      }
+    }
+    if(!cand){
+      var ok=pool.filter(function(s){var c=s.split('|')[1];return !used[c]});
+      if(!ok.length)break;
+      cand=ok[ri(r,ok.length)];
+    }
+    var o=parseItem(cand);
+    used[o.hz]=1;
+    list.push({kind:'hz',tag:'hz',py:o.py,hz:o.hz,w:o.w,key:cand});
+  }
+  return shuffle(list,r);
+}
+function startHz(){
+  SS={kind:'hz',list:genHz(hash(todayKey()+'|h|'+offGet('hz'))),i:0,ok:0,wrong:[],t0:Date.now(),lock:0,show:0,marked:null};
+  TAB='hz';render();syncTabs();window.scrollTo(0,0);
+}
 function finish(){
   var d=todayKey(),R=rec(d),ms=Date.now()-SS.t0,k=R[SS.kind];
   k.t+=SS.list.length;k.c+=SS.ok;k.ms=(k.ms||0)+ms;
@@ -569,8 +723,9 @@ function finish(){
     if(SS.kind==='math'){
       k.w.unshift({q:w.q,ans:w.ans,t:w.t,cn:w.cn});
     }else{
-      k.w.unshift({py:w.py,hz:w.hz,tag:w.tag});
-      S.weak[w.py]=(S.weak[w.py]||0)+1;
+      k.w.unshift({py:w.py,hz:w.hz,w:w.w||'',tag:w.tag});
+      if(SS.kind==='hz'){if(w.hz)S.weakH[w.hz]=(S.weakH[w.hz]||0)+1}
+      else S.weak[w.py]=(S.weak[w.py]||0)+1;
     }
   });
   SS.list.forEach(function(q){
@@ -587,16 +742,17 @@ function finish(){
 
 /* ================= 渲染路由 ================= */
 var TAB='home';
+var PRACTICE={math:1,py:1,hz:1,mdone:1,pdone:1,hdone:1};
 function syncTabs(){
-  var t=TAB,practice=(t==='math'||t==='py'||t==='mdone'||t==='pdone');
-  var active=practice?'home':(t==='set'?'stat':t);
+  var t=TAB;
+  var active=PRACTICE[t]?'home':(t==='set'?'stat':t);
   document.querySelectorAll('#tabs button').forEach(function(b){
     b.classList.toggle('on',b.dataset.t===active);
   });
 }
 function go(t){
   TAB=t;
-  if(t!=='math'&&t!=='py'&&t!=='mdone'&&t!=='pdone')SS=null;
+  if(!PRACTICE[t])SS=null;
   render();syncTabs();window.scrollTo(0,0);
 }
 function render(){
@@ -606,8 +762,10 @@ function render(){
   else if(TAB==='set')h=viewSet();
   else if(TAB==='math')h=viewMath();
   else if(TAB==='py')h=viewPy();
+  else if(TAB==='hz')h=viewHz();
   else if(TAB==='mdone')h=viewDone('math');
   else if(TAB==='pdone')h=viewDone('py');
+  else if(TAB==='hdone')h=viewDone('hz');
   $('#app').innerHTML=h;
   if(TAB==='math')bindMath();
 }
@@ -647,8 +805,8 @@ function showInstall(){
   openSheet('<h3 style="margin:0 0 4px">📲 添加到主屏幕</h3><div class="muted">像 App 一样全屏使用</div>',b,[{t:'知道了',c:'p',f:closeSheet}]);
 }
 function viewHome(){
-  var d=todayKey(),R=todayRec(),m=R.math,p=R.py;
-  var mPct=pct(m.c,m.t),pPct=pct(p.c,p.t);
+  var d=todayKey(),R=todayRec(),m=R.math,p=R.py,z=R.hz;
+  var mPct=pct(m.c,m.t),pPct=pct(p.c,p.t),zPct=pct(z.c,z.t);
   var h=installHint();
   h+='<div class="hd"><div class="avatar">'+esc(S.child.slice(0,1))+'</div><div class="grow"><div class="tt">'+esc(S.child)+'，今天也要加油鸭</div><div class="dt">'+cnDate(d)+' · '+['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][new Date().getDay()]+'</div></div></div>';
 
@@ -658,6 +816,10 @@ function viewHome(){
   h+='<div class="stat"><b style="color:var(--math)">'+(m.t?mPct:0)+'%</b><span>数学正确</span></div>';
   h+='<div class="stat"><b style="color:var(--py)">'+p.t+'</b><span>拼音已练</span></div>';
   h+='<div class="stat"><b style="color:var(--py)">'+(p.t?pPct:0)+'%</b><span>拼音读对</span></div>';
+  h+='</div>';
+  h+='<div class="grid4" style="margin-top:8px">';
+  h+='<div class="stat"><b style="color:var(--hz)">'+z.t+'</b><span>汉字已认</span></div>';
+  h+='<div class="stat"><b style="color:var(--hz)">'+(z.t?zPct:0)+'%</b><span>汉字认对</span></div>';
   h+='</div></div>';
 
   h+='<div class="entry m" onclick="startMath()"><div class="nm">🔢 数学计算</div><div class="bar"><i style="width:'+Math.min(100,mPct)+'%"></i></div><div class="pg">'+(m.t?m.c+'/'+m.t:'开练')+'</div></div>';
@@ -667,12 +829,21 @@ function viewHome(){
   h+='<div class="entry p" onclick="startPy()"><div class="nm">🗣️ 拼音朗读</div><div class="bar"><i style="width:'+Math.min(100,pPct)+'%"></i></div><div class="pg">'+(p.t?p.c+'/'+p.t:'开练')+'</div></div>';
   h+='<div class="row" style="margin:-4px 0 12px"><div class="chip" onclick="quickCount(\'py\')">改题量</div><div class="chip" onclick="newSet(\'py\')">换一组</div><div class="chip" onclick="go(\'stat\')">看统计</div></div>';
 
+  h+='<div class="entry h" onclick="startHz()"><div class="nm">🈶 汉字认读</div><div class="bar"><i style="width:'+Math.min(100,zPct)+'%"></i></div><div class="pg">'+(z.t?z.c+'/'+z.t:'开练')+'</div></div>';
+  h+='<div class="row" style="margin:-4px 0 12px"><div class="chip" onclick="quickCount(\'hz\')">改题量</div><div class="chip" onclick="newSet(\'hz\')">换一组</div><div class="chip" onclick="go(\'stat\')">看统计</div></div>';
+
   /* 薄弱提醒 */
   var wk=topWeak(6);
   if(wk.length){
     h+='<div class="card"><h3>💡 最近容易读错的音</h3><div class="row" style="flex-wrap:wrap">';
     wk.forEach(function(w){h+='<span class="chip" style="font-size:15px;font-weight:800;letter-spacing:1px">'+esc(w.k)+' <span class="badge">'+w.v+'</span></span>'});
     h+='</div><div class="muted" style="margin-top:8px">这些音会优先出现在明天的练习里</div></div>';
+  }
+  var wkz=topWeakHz(6);
+  if(wkz.length){
+    h+='<div class="card"><h3>🈶 最近不认识的汉字</h3><div class="row" style="flex-wrap:wrap">';
+    wkz.forEach(function(w){h+='<span class="chip" style="font-size:18px;font-weight:800">'+esc(w.k)+' <span class="badge">'+w.v+'</span></span>'});
+    h+='</div><div class="muted" style="margin-top:8px">这些字明天会再出现一次</div></div>';
   }
   var mw=mathWeakTop();
   if(mw)h+='<div class="card"><h3>🧮 数学小提醒</h3><div class="muted">'+mw+'</div></div>';
@@ -685,7 +856,7 @@ function streak(){
   var n=0,d=new Date();
   for(var i=0;i<400;i++){
     var k=dk(d),r=S.records[k];
-    if(r&&((r.math&&r.math.t)||(r.py&&r.py.t)))n++;
+    if(r&&((r.math&&r.math.t)||(r.py&&r.py.t)||(r.hz&&r.hz.t)))n++;
     else if(i>0)break;
     else if(!r&&i===0){/* 今天还没练，从昨天算 */}
     d.setDate(d.getDate()-1);
@@ -695,6 +866,10 @@ function streak(){
 }
 function topWeak(n){
   var a=[];for(var k in S.weak)a.push({k:k,v:S.weak[k]});
+  a.sort(function(x,y){return y.v-x.v});return a.slice(0,n);
+}
+function topWeakHz(n){
+  var a=[];for(var k in S.weakH)a.push({k:k,v:S.weakH[k]});
   a.sort(function(x,y){return y.v-x.v});return a.slice(0,n);
 }
 function mathWeakTop(){
@@ -711,13 +886,16 @@ function mathWeakTop(){
   return '最近「'+(t?t.n:worst)+'」正确率 '+wv+'%，明天练习里多练几道这类题吧。';
 }
 function quickCount(kind){
-  var v=kind==='math'?S.math.count:pyTotal();
-  openSheet('<h3 style="margin:0 0 4px">'+(kind==='math'?'数学':'拼音')+'题量</h3><div class="muted">每天都能改，只影响今天的练习</div>',
+  var v=kind==='math'?S.math.count:(kind==='py'?pyTotal():S.hz.count);
+  var nm=kind==='math'?'数学':(kind==='py'?'拼音':'汉字');
+  openSheet('<h3 style="margin:0 0 4px">'+nm+'题量</h3><div class="muted">每天都能改，只影响今天的练习</div>',
     '<div class="card" style="box-shadow:none;padding:14px 0"><div class="set"><div><div class="lb">今天做几道/几张</div></div>'+stepperHTML('qc',v,1,60,1)+'</div>'+
-    '<div class="muted" style="margin-top:6px">'+(kind==='math'?'数学题数':'拼音卡片数')+'：改完点确定就开始新的一组</div></div>',
+    '<div class="muted" style="margin-top:6px">'+(kind==='math'?'数学题数':(kind==='py'?'拼音卡片数':'汉字卡片数'))+'：改完点确定就开始新的一组</div></div>',
     [{t:'确定',c:'p',f:function(){
       var nv=STEPV.qc;
-      if(kind==='math'){S.math.count=nv}else{distributePy(nv)}
+      if(kind==='math'){S.math.count=nv}
+      else if(kind==='py'){distributePy(nv)}
+      else{S.hz.count=nv}
       save();closeSheet();newSet(kind);
     }},{t:'取消',c:'g',f:closeSheet}]);
 }
@@ -729,7 +907,12 @@ function distributePy(n){
   ks.forEach(function(k,i){S.py.counts[k]=base+(i<rem?1:0)});
 }
 function pyTotal(){var n=0;PY_TYPES.forEach(function(t){n+=S.py.counts[t.k]||0});return n}
-function newSet(kind){offInc(kind);if(kind==='math')startMath();else startPy()}
+function newSet(kind){
+  offInc(kind);
+  if(kind==='math')startMath();
+  else if(kind==='py')startPy();
+  else startHz();
+}
 
 /* ================= 数学练习 ================= */
 function viewMath(){
@@ -885,26 +1068,84 @@ function quitPy(){
   }else go('home');
 }
 
+/* ================= 汉字认读练习 ================= */
+function viewHz(){
+  var it=SS.list[SS.i],n=SS.list.length;
+  var h='<div class="ptop"><button onclick="quitHz()" style="font-size:20px">‹</button><div class="bar h"><i style="width:'+(SS.i/n*100)+'%"></i></div><div class="cnt">'+(SS.i+1)+'/'+n+'</div></div>';
+  h+='<div class="hcard" onclick="hzShow()">';
+  if(SS.show){
+    h+='<div class="hzpy">'+esc(it.py)+'</div>';
+  }else{
+    h+='<div class="hzpy off">👆 点一下卡片，看看它怎么读</div>';
+  }
+  h+='<div class="hzbig">'+esc(it.hz)+'</div>';
+  if(S.hz.showWord&&it.w)h+='<div class="hzw"><i>词语</i>'+esc(it.w)+'</div>';
+  h+='<div class="hzfb '+(SS.marked===1?'ok':(SS.marked===0?'no':''))+'">'+(SS.marked===1?'👍 认得真棒！':(SS.marked===0?'👀 记住它：'+esc(it.py)+'　'+esc(it.w||''):'&nbsp;'))+'</div>';
+  h+='</div>';
+  h+='<button class="btn g" style="margin-top:16px" onclick="hzSpeak()">🔊 听一听这个字</button>';
+  if(!SS.show){
+    h+='<button class="btn p" style="margin-top:10px" onclick="hzShow()">👆 显示拼音</button>';
+    h+='<div class="muted" style="text-align:center;margin-top:16px">先让孩子自己读，读不出再点开拼音</div>';
+  }else if(SS.marked===null||SS.marked===undefined){
+    h+='<div class="btnrow" style="margin-top:10px"><button class="btn ok" onclick="hzAns(1)">✅ 认对了</button><button class="btn no" onclick="hzAns(0)">❌ 不认识</button></div>';
+    h+='<div class="muted" style="text-align:center;margin-top:16px">认对了点左边；不认识点右边，明天会再出现</div>';
+  }else{
+    h+='<button class="btn p" style="margin-top:10px" onclick="hzNext()">下一张 ›</button>';
+  }
+  return h;
+}
+function hzShow(){if(SS.show)return;SS.show=1;render()}
+function hzSpeak(){
+  var it=SS.list[SS.i];
+  try{
+    if(!window.speechSynthesis){toast('这个浏览器不支持朗读');return}
+    speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(it.hz+'，'+(it.w||''));u.lang='zh-CN';u.rate=0.75;
+    speechSynthesis.speak(u);
+  }catch(e){toast('朗读不可用')}
+}
+function hzAns(ok){
+  if(SS.marked!==null&&SS.marked!==undefined)return;
+  var it=SS.list[SS.i];
+  SS.show=1;
+  if(ok){SS.ok++;SS.marked=1}
+  else{SS.wrong.push({py:it.py,hz:it.hz,w:it.w,tag:'hz'});SS.marked=0}
+  render();
+}
+function hzNext(){
+  SS.i++;SS.show=0;SS.marked=null;
+  if(SS.i>=SS.list.length){finish();TAB='hdone';render();window.scrollTo(0,0);return}
+  render();
+}
+function quitHz(){
+  if(SS.i>0){
+    openSheet('<h3 style="margin:0">要结束这一组吗？</h3><div class="muted" style="margin-top:6px">已经认的 '+SS.i+' 个字会被记录下来</div>',
+      '',[{t:'记录并退出',c:'p',f:function(){SS.list=SS.list.slice(0,SS.i);finish();closeSheet();go('home')}},{t:'继续练习',c:'g',f:closeSheet},{t:'直接放弃',c:'g',f:function(){closeSheet();go('home')}}]);
+  }else go('home');
+}
+
 /* ================= 完成页 ================= */
 function viewDone(kind){
   var n=SS.list.length,ok=SS.ok,rate=pct(ok,n),ms=Date.now()-SS.t0;
   var star=rate>=90?3:(rate>=70?2:(rate>=50?1:0));
   var h='<div class="card"><div class="done">';
   h+='<div class="em">'+(star>=3?'🏆':(star===2?'🎉':(star===1?'👍':'💪')))+'</div>';
-  h+='<h2>'+(kind==='math'?'数学练习完成':'拼音练习完成')+'</h2>';
+  h+='<h2>'+(kind==='math'?'数学练习完成':(kind==='py'?'拼音练习完成':'汉字认读完成'))+'</h2>';
   h+='<div class="stars">'+(star?'★'.repeat(star):'')+'<span style="color:#E3D6C4">'+(star?'☆'.repeat(3-star):'☆☆☆')+'</span></div>';
   h+='<div class="grid4" style="margin-top:8px">';
-  h+='<div class="stat"><b>'+n+'</b><span>'+(kind==='math'?'总题数':'总卡片')+'</span></div>';
-  h+='<div class="stat"><b style="color:var(--good)">'+ok+'</b><span>'+(kind==='math'?'答对':'读对')+'</span></div>';
+  h+='<div class="stat"><b>'+n+'</b><span>'+(kind==='math'?'总题数':(kind==='py'?'总卡片':'总字数'))+'</span></div>';
+  h+='<div class="stat"><b style="color:var(--good)">'+ok+'</b><span>'+(kind==='math'?'答对':(kind==='py'?'读对':'认对'))+'</span></div>';
   h+='<div class="stat"><b style="color:'+(rate>=80?'var(--good)':'var(--warn)')+'">'+rate+'%</b><span>正确率</span></div>';
   h+='<div class="stat"><b>'+Math.round(ms/1000)+'s</b><span>用时</span></div>';
   h+='</div>';
   h+='<div class="muted" style="margin-top:10px">'+(rate>=90?'全部掌握啦，太厉害了！':(rate>=70?'不错哦，错的再看一遍就会了':'别灰心，我们再练一组就熟了'))+'</div>';
   h+='</div></div>';
   if(SS.wrong.length){
-    h+='<div class="card"><h3>'+(kind==='math'?'❌ 这几道再看看':'🔁 这几个音还要练')+'</h3>';
+    h+='<div class="card"><h3>'+(kind==='math'?'❌ 这几道再看看':(kind==='py'?'🔁 这几个音还要练':'🔁 这几个字还要认'))+'</h3>';
     SS.wrong.forEach(function(w){
-      h+='<div class="wrongitem"><span>'+(kind==='math'?w.q.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()+' 　正确答案 <b>'+w.ans+'</b> <span class="muted">（答了 '+w.cn+'）</span>':'<b style="font-size:16px;letter-spacing:1px">'+esc(w.py)+'</b> <span class="muted">'+esc(w.hz)+'</span>')+'</span></div>';
+      h+='<div class="wrongitem"><span>'+(kind==='math'?w.q.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()+' 　正确答案 <b>'+w.ans+'</b> <span class="muted">（答了 '+w.cn+'）</span>'
+        :(kind==='hz'?'<b style="font-size:22px">'+esc(w.hz)+'</b> <span style="font-size:15px;font-weight:800;color:var(--math)">'+esc(w.py)+'</span> <span class="muted">'+esc(w.w||'')+'</span>'
+        :'<b style="font-size:16px;letter-spacing:1px">'+esc(w.py)+'</b> <span class="muted">'+esc(w.hz)+'</span>'))+'</span></div>';
     });
     h+='</div>';
   }
@@ -946,28 +1187,29 @@ function lastDays(n){
   return a;
 }
 function viewStat(){
-  var days=lastDays(14),md=[],pd=[],any=false;
+  var days=lastDays(14),md=[],pd=[],hd=[],any=false;
   days.forEach(function(k){
     var r=S.records[k];
     var m=r&&r.math&&r.math.t?r.math.c/r.math.t:null;
     var p=r&&r.py&&r.py.t?r.py.c/r.py.t:null;
-    if(m!==null||p!==null)any=true;
-    md.push(m);pd.push(p);
+    var z=r&&r.hz&&r.hz.t?r.hz.c/r.hz.t:null;
+    if(m!==null||p!==null||z!==null)any=true;
+    md.push(m);pd.push(p);hd.push(z);
   });
-  var R=todayRec(),tot=0,tc=0,pt=0,pc=0,dsum=0;
-  for(var k in S.records){var r=S.records[k];tot+=r.math.t;tc+=r.math.c;pt+=r.py.t;pc+=r.py.c;dsum++}
-  var h='<div class="hd"><div class="grow"><div class="tt">📊 练习统计</div><div class="dt">累计 '+dsum+' 天 · 数学 '+tot+' 题 · 拼音 '+pt+' 张</div></div><button class="hdset" onclick="go(\'set\')">⚙️ 设置</button></div>';
+  var R=todayRec(),tot=0,tc=0,pt=0,pc=0,ht=0,hc=0,dsum=0;
+  for(var k in S.records){var r=S.records[k];tot+=r.math.t;tc+=r.math.c;pt+=r.py.t;pc+=r.py.c;ht+=(r.hz?r.hz.t:0);hc+=(r.hz?r.hz.c:0);dsum++}
+  var h='<div class="hd"><div class="grow"><div class="tt">📊 练习统计</div><div class="dt">累计 '+dsum+' 天 · 数学 '+tot+' 题 · 拼音 '+pt+' 张 · 汉字 '+ht+' 字</div></div><button class="hdset" onclick="go(\'set\')">⚙️ 设置</button></div>';
   h+='<div class="grid4">';
-  h+='<div class="stat"><b style="color:var(--math)">'+pct(tc,tot)+'%</b><span>数学总正确率</span></div>';
-  h+='<div class="stat"><b style="color:var(--py)">'+pct(pc,pt)+'%</b><span>拼音总掌握率</span></div>';
+  h+='<div class="stat"><b style="color:var(--math)">'+pct(tc,tot)+'%</b><span>数学正确率</span></div>';
+  h+='<div class="stat"><b style="color:var(--py)">'+pct(pc,pt)+'%</b><span>拼音掌握率</span></div>';
+  h+='<div class="stat"><b style="color:var(--hz)">'+pct(hc,ht)+'%</b><span>汉字认读率</span></div>';
   h+='<div class="stat"><b>'+streak()+'</b><span>连续打卡(天)</span></div>';
-  h+='<div class="stat"><b>'+dsum+'</b><span>练习天数</span></div>';
   h+='</div>';
 
   h+='<div class="card" style="margin-top:12px"><h3>📈 近 14 天正确率</h3>';
   if(any){
-    h+='<div class="muted" style="margin-bottom:6px"><span style="color:var(--math)">■</span> 数学　<span style="color:var(--py)">■</span> 拼音</div>';
-    h+=trendSVG(md,pd,days);
+    h+='<div class="muted" style="margin-bottom:6px"><span style="color:var(--math)">■</span> 数学　<span style="color:var(--py)">■</span> 拼音　<span style="color:var(--hz)">■</span> 汉字</div>';
+    h+=trendSVG(md,pd,hd,days);
   }else h+='<div class="muted">还没有练习记录，做完一组就能看到曲线啦</div>';
   h+='</div>';
 
@@ -995,6 +1237,13 @@ function viewStat(){
     h+='</div><div class="muted" style="margin-top:8px">系统会反复安排这些音，直到读对为止</div></div>';
   }
 
+  var wkz=topWeakHz(12);
+  if(wkz.length){
+    h+='<div class="card"><h3>🈶 不认识的汉字 TOP</h3><div class="list">';
+    wkz.forEach(function(w){h+='<div class="wrongitem"><b style="font-size:22px">'+esc(w.k)+'</b><span class="badge">'+w.v+' 次</span></div>'});
+    h+='</div><div class="muted" style="margin-top:8px">这些字会反复出现，直到认得为止</div></div>';
+  }
+
   var mw=collectMathWrong(12);
   if(mw.length){
     h+='<div class="card"><h3>❌ 数学易错题</h3><div class="list">';
@@ -1007,10 +1256,10 @@ function viewStat(){
   if(ks.length){
     h+='<div class="card"><h3>📋 每日记录</h3><div class="list">';
     ks.forEach(function(k){
-      var r=S.records[k],mp=pct(r.math.c,r.math.t),pp=pct(r.py.c,r.py.t);
+      var r=S.records[k],mp=pct(r.math.c,r.math.t),pp=pct(r.py.c,r.py.t),z=r.hz||{t:0,c:0},zp=pct(z.c,z.t);
       h+='<div class="li" onclick="openDay(\''+k+'\')"><div class="between"><span class="d">'+cnDate(k)+' ›</span><span class="muted">'+(r.math.t?Math.round(r.math.ms/1000)+'s':'')+'</span></div>';
-      h+='<div class="v"><span style="color:var(--math)">数学 '+r.math.c+'/'+r.math.t+'（'+mp+'%）</span><span style="color:var(--py)">拼音 '+r.py.c+'/'+r.py.t+'（'+pp+'%）</span></div>';
-      h+='<div class="barmini"><i style="width:'+((mp+pp)/2)+'%;background:var(--math)"></i></div></div>';
+      h+='<div class="v"><span style="color:var(--math)">数学 '+r.math.c+'/'+r.math.t+'（'+mp+'%）</span><span style="color:var(--py)">拼音 '+r.py.c+'/'+r.py.t+'（'+pp+'%）</span><span style="color:var(--hz)">汉字 '+z.c+'/'+z.t+'（'+zp+'%）</span></div>';
+      h+='<div class="barmini"><i style="width:'+((mp+pp+zp)/3)+'%;background:var(--math)"></i></div></div>';
     });
     h+='</div></div>';
   }
@@ -1046,12 +1295,14 @@ function redoAll(){
 }
 function openDay(k){
   var r=S.records[k];if(!r)return;
-  var mp=pct(r.math.c,r.math.t),pp=pct(r.py.c,r.py.t);
+  var mp=pct(r.math.c,r.math.t),pp=pct(r.py.c,r.py.t),z=r.hz||{t:0,c:0},zp=pct(z.c,z.t);
   var b='<div class="card" style="box-shadow:none;padding:12px 0">';
   b+='<div class="grid4"><div class="stat"><b style="color:var(--math)">'+r.math.c+'/'+r.math.t+'</b><span>数学</span></div>';
   b+='<div class="stat"><b style="color:var(--math)">'+mp+'%</b><span>正确率</span></div>';
   b+='<div class="stat"><b style="color:var(--py)">'+r.py.c+'/'+r.py.t+'</b><span>拼音</span></div>';
   b+='<div class="stat"><b style="color:var(--py)">'+pp+'%</b><span>读对率</span></div></div>';
+  b+='<div class="grid4" style="margin-top:8px"><div class="stat"><b style="color:var(--hz)">'+z.c+'/'+z.t+'</b><span>汉字</span></div>';
+  b+='<div class="stat"><b style="color:var(--hz)">'+zp+'%</b><span>认读率</span></div></div>';
   if((r.math.w||[]).length){
     b+='<div style="margin-top:12px;font-weight:800;font-size:14px">❌ 数学错题</div>';
     r.math.w.slice(0,12).forEach(function(w){
@@ -1064,7 +1315,13 @@ function openDay(k){
       b+='<div class="wrongitem"><b style="font-size:16px;letter-spacing:1px">'+esc(w.py)+'</b><span class="muted">'+esc(w.hz)+'</span></div>';
     });
   }
-  if(!(r.math.w||[]).length&&!(r.py.w||[]).length)b+='<div class="muted" style="margin-top:12px">这一天全对，没有错题 🎉</div>';
+  if((r.hz.w||[]).length){
+    b+='<div style="margin-top:12px;font-weight:800;font-size:14px">🈶 不认识的汉字</div>';
+    r.hz.w.slice(0,12).forEach(function(w){
+      b+='<div class="wrongitem"><b style="font-size:20px">'+esc(w.hz)+'</b><span class="muted" style="font-weight:800;color:var(--math)">'+esc(w.py)+'</span><span class="muted">'+esc(w.w||'')+'</span></div>';
+    });
+  }
+  if(!(r.math.w||[]).length&&!(r.py.w||[]).length&&!(r.hz.w||[]).length)b+='<div class="muted" style="margin-top:12px">这一天全对，没有错题 🎉</div>';
   b+='</div>';
   openSheet('<h3 style="margin:0 0 4px">'+cnDate(k)+' 练习详情</h3><div class="muted">用时 '+(r.math.t?Math.round(r.math.ms/1000)+' 秒':'—')+'</div>',b,[{t:'知道了',c:'p',f:closeSheet}]);
 }
@@ -1075,16 +1332,16 @@ function calHTML(n){
   for(var i=0;i<startPad;i++)h+='<div style="background:transparent"></div>';
   for(var i=0;i<n;i++){
     var k=dk(d),r=S.records[k];
-    var mt=r&&r.math?r.math.t:0,pt=r&&r.py?r.py.t:0;
-    var goal=(S.math.count||10)+(pyTotal()||10);
-    var v=(mt+pt)/goal;
-    var lv=mt+pt===0?0:(v>=1?3:(v>=0.5?2:1));
+    var mt=r&&r.math?r.math.t:0,pt=r&&r.py?r.py.t:0,zt=r&&r.hz?r.hz.t:0;
+    var goal=(S.math.count||10)+(pyTotal()||10)+(S.hz.count||20);
+    var v=(mt+pt+zt)/goal;
+    var lv=mt+pt+zt===0?0:(v>=1?3:(v>=0.5?2:1));
     h+='<div class="l'+lv+(k===todayKey()?' td':'')+'">'+(+k.split('-')[2])+'</div>';
     d.setDate(d.getDate()+1);
   }
   return h;
 }
-function trendSVG(md,pd,days){
+function trendSVG(md,pd,hd,days){
   var W=300,H=90,pl=6,pr=6,pb=16,pt=6;
   var n=md.length,step=(W-pl-pr)/(n-1);
   function y(v){return H-pb-v*(H-pt-pb)}
@@ -1101,8 +1358,10 @@ function trendSVG(md,pd,days){
   [0,0.5,1].forEach(function(g){h+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y(g)+'" y2="'+y(g)+'" stroke="#F0E4D6" stroke-width="1"/>';});
   h+='<path d="'+path(md)+'" fill="none" stroke="var(--math)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
   h+='<path d="'+path(pd)+'" fill="none" stroke="var(--py)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
+  if(hd)h+='<path d="'+path(hd)+'" fill="none" stroke="var(--hz)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>';
   md.forEach(function(v,i){if(v!==null)h+='<circle cx="'+(pl+i*step).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="2.6" fill="var(--math)"/>'});
   pd.forEach(function(v,i){if(v!==null)h+='<circle cx="'+(pl+i*step).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="2.6" fill="var(--py)"/>'});
+  if(hd)hd.forEach(function(v,i){if(v!==null)h+='<circle cx="'+(pl+i*step).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="2.6" fill="var(--hz)"/>'});
   h+='<text x="'+pl+'" y="'+(H-3)+'" font-size="9" fill="#8A7C6B">'+cnDate(days[0])+'</text>';
   h+='<text x="'+(W-pr)+'" y="'+(H-3)+'" font-size="9" fill="#8A7C6B" text-anchor="end">今天</text>';
   h+='</svg>';
@@ -1129,6 +1388,11 @@ function viewSet(){
   h+='<div class="set"><div class="grow"><div class="lb">朗读示范按钮</div><div class="sb">手机语音可能不标准，仅供参考</div></div><button class="chip'+(S.py.speak?' on':'')+'" onclick="toggle(\'speak\')">'+(S.py.speak?'开':'关')+'</button></div>';
   h+='</div>';
 
+  h+='<div class="card"><h3>🈶 汉字认读 <span class="muted" style="font-weight:400">共 '+HANZI.length+' 字</span></h3>';
+  h+='<div class="set"><div class="grow"><div class="lb">每天认几个字</div><div class="sb">先只显示汉字，点一下才出拼音</div></div>'+stepperHTML('hc',S.hz.count,1,60,1,function(v){S.hz.count=v;save()})+'</div>';
+  h+='<div class="set"><div class="grow"><div class="lb">显示词语</div><div class="sb">词语能帮助理解字的意思</div></div><button class="chip'+(S.hz.showWord?' on':'')+'" onclick="toggleHz(\'showWord\')">'+(S.hz.showWord?'开':'关')+'</button></div>';
+  h+='</div>';
+
   h+='<div class="card"><h3>💾 数据</h3>';
   h+='<button class="btn g" onclick="exportData()">导出记录（备份）</button>';
   h+='<button class="btn g" style="margin-top:10px" onclick="document.getElementById(\'imp\').click()">导入记录</button>';
@@ -1147,6 +1411,7 @@ function toggleType(k){
   save();render();
 }
 function toggle(k){S.py[k]=!S.py[k];save();render()}
+function toggleHz(k){S.hz[k]=!S.hz[k];save();render()}
 function exportData(){
   var blob=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);
@@ -1167,7 +1432,8 @@ function mergeObj(o){
   d.child=o.child||d.child;
   if(o.math){d.math=o.math}
   if(o.py){d.py=o.py}
-  d.records=o.records||{};d.weak=o.weak||{};d.off=o.off||{};
+  if(o.hz){d.hz=o.hz}
+  d.records=o.records||{};d.weak=o.weak||{};d.weakH=o.weakH||{};d.off=o.off||{};
   return d;
 }
 function clearData(){
@@ -1188,6 +1454,7 @@ function st(id,d,min,max,live){
   var el=document.getElementById('sv_'+id);if(el)el.textContent=v;
   if(live){
     if(id==='mc'){S.math.count=v;save()}
+    if(id==='hc'){S.hz.count=v;save()}
     if(id.indexOf('pc_')===0){S.py.counts[id.slice(3)]=v;save()}
   }
 }
