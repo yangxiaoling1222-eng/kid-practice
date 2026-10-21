@@ -125,9 +125,6 @@ button{font-family:inherit;font-size:inherit;color:inherit;border:0;background:n
 .hzbig{font-size:clamp(90px,27vw,132px);font-weight:800;line-height:1.05;color:var(--ink);margin:2px 0}
 .hzw{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:2px;margin-top:10px}
 .hzw i{font-style:normal;font-size:12px;font-weight:600;color:var(--ink2);letter-spacing:0;margin-right:4px}
-.hzfb{margin-top:14px;font-size:14px;font-weight:800;min-height:22px}
-.hzfb.ok{color:var(--good)}
-.hzfb.no{color:var(--bad)}
 
 /* 按钮 */
 .btn{display:block;width:100%;padding:15px;border-radius:16px;font-size:17px;font-weight:800;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.06)}
@@ -1080,17 +1077,14 @@ function viewHz(){
   }
   h+='<div class="hzbig">'+esc(it.hz)+'</div>';
   if(S.hz.showWord&&it.w)h+='<div class="hzw"><i>词语</i>'+esc(it.w)+'</div>';
-  h+='<div class="hzfb '+(SS.marked===1?'ok':(SS.marked===0?'no':''))+'">'+(SS.marked===1?'👍 认得真棒！':(SS.marked===0?'👀 记住它：'+esc(it.py)+'　'+esc(it.w||''):'&nbsp;'))+'</div>';
   h+='</div>';
   h+='<button class="btn g" style="margin-top:16px" onclick="hzSpeak()">🔊 听一听这个字</button>';
   if(!SS.show){
     h+='<button class="btn p" style="margin-top:10px" onclick="hzShow()">👆 显示拼音</button>';
     h+='<div class="muted" style="text-align:center;margin-top:16px">先让孩子自己读，读不出再点开拼音</div>';
-  }else if(SS.marked===null||SS.marked===undefined){
+  }else{
     h+='<div class="btnrow" style="margin-top:10px"><button class="btn ok" onclick="hzAns(1)">✅ 认对了</button><button class="btn no" onclick="hzAns(0)">❌ 不认识</button></div>';
     h+='<div class="muted" style="text-align:center;margin-top:16px">认对了点左边；不认识点右边，明天会再出现</div>';
-  }else{
-    h+='<button class="btn p" style="margin-top:10px" onclick="hzNext()">下一张 ›</button>';
   }
   return h;
 }
@@ -1107,10 +1101,10 @@ function hzSpeak(){
 function hzAns(ok){
   if(SS.marked!==null&&SS.marked!==undefined)return;
   var it=SS.list[SS.i];
-  SS.show=1;
-  if(ok){SS.ok++;SS.marked=1}
-  else{SS.wrong.push({py:it.py,hz:it.hz,w:it.w,tag:'hz'});SS.marked=0}
-  render();
+  SS.marked=ok?1:0;
+  if(ok)SS.ok++;
+  else SS.wrong.push({py:it.py,hz:it.hz,w:it.w,tag:'hz'});
+  hzNext();
 }
 function hzNext(){
   SS.i++;SS.show=0;SS.marked=null;
