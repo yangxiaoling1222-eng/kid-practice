@@ -1,6 +1,6 @@
 {
-  "name": "每日练习",
-  "short_name": "练习",
+  "name": "琦琦练习",
+  "short_name": "琦琦练习",
   "description": "幼儿园大班每日练习：10以内加减法 + 拼音朗读",
   "start_url": "./",
   "scope": "./",
